@@ -2,8 +2,6 @@
 
 namespace Nightingale
 {
-    namespace MajesticScript
-    {
         public static class WriteLog
         {
             public static void None(string message)
@@ -45,6 +43,5 @@ namespace Nightingale
                 return null;
             }
         }
-    }
 
 }

@@ -23,7 +23,7 @@ namespace Nightingale
 
         public void OnServerStart()
         {
-
+            WriteLog.Info("Nightingale by Mahjestic");
         }
     }
 }
