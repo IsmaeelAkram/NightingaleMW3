@@ -5,8 +5,6 @@ namespace Nightingale
 {
     public class Nightingale : BaseScript
     {
-        List<Entity> PlayerList;
-
         public Nightingale()
         {
             OnServerStart();
@@ -21,7 +19,6 @@ namespace Nightingale
                 return;
             });
 
-            PlayerList.Add(player);
             Players.Add(player);
 
             player.SetClientDvar("cg_objectiveText", "^3This server is powered by ^1Nightingale ^5by Mahjestic.");

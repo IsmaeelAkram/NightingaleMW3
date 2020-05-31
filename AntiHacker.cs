@@ -27,6 +27,21 @@ namespace Nightingale
 
         public static bool HasBadIP(Entity player)
         {
+            if (File.Exists(Paths.ConfigPath + "Nightingale/AntiHacker/badIPs.txt"))
+            {
+                string[] IPs = File.ReadAllLines(Paths.ConfigPath + "Nightingale/AntiHacker/badIPs.txt");
+                foreach (string IP in IPs)
+                {
+                    if (player.IP.Address.ToString() == IP)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                File.Create(Paths.ConfigPath + "Nightingale/AntiHacker/badIPs.txt");
+            }
             return false;
         }
     }
