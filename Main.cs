@@ -15,6 +15,12 @@ namespace Nightingale
 
         public void OnPlayerConnect(Entity player)
         {
+            if (AntiHacker.HasBadName(player)) return;
+            if (AntiHacker.HasBadIP(player)) AfterDelay(2000, () => {
+                Utilities.ExecuteCommand($"kick \"{player.Name}\" ^1Proxies and VPNs are not allowed on this server!");
+                return;
+            });
+
             PlayerList.Add(player);
             Players.Add(player);
 
