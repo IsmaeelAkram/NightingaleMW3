@@ -14,14 +14,10 @@ namespace Nightingale
         {
             function = function_;
         }
-
-        public void CallCommand(string name)
-        {
-
-        }
     }
 
     class Commands
     {
+
     }
 }

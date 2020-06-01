@@ -44,4 +44,12 @@ namespace Nightingale
             }
         }
 
+        public class Moderation
+        {
+            public static void KickPlayer(Entity player, string reason)
+            {
+                Utilities.ExecuteCommand($"kick \"{player.Name}\" {reason}");
+            }
+        }
+
 }

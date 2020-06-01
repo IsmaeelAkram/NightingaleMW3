@@ -1,5 +1,5 @@
 ﻿using InfinityScript;
-using System.Collections.Generic;
+using System.IO;
 
 namespace Nightingale
 {
@@ -13,9 +13,14 @@ namespace Nightingale
 
         public void OnPlayerConnect(Entity player)
         {
-            if (AntiHacker.HasBadName(player)) return;
+            if (AntiHacker.HasBadName(player)) AfterDelay(2000, () => {
+                Moderation.KickPlayer(player, Messages.BadName);
+                WriteLog.Warning($"{player.Name} has been kicked for a bad name.");
+                return;
+            });
             if (AntiHacker.HasBadIP(player)) AfterDelay(2000, () => {
-                Utilities.ExecuteCommand($"kick \"{player.Name}\" ^1Proxies and VPNs are not allowed on this server!");
+                Moderation.KickPlayer(player, Messages.BadIP);
+                WriteLog.Warning($"{player.Name} has been kicked for a bad IP.");
                 return;
             });
 
@@ -26,7 +31,10 @@ namespace Nightingale
 
         public void OnServerStart()
         {
-            WriteLog.Info("Nightingale by Mahjestic");
+            if(!Directory.Exists(Paths.MainPath)) Directory.CreateDirectory(Paths.MainPath);
+            if (!Directory.Exists(Paths.AntiHackerPath)) Directory.CreateDirectory(Paths.AntiHackerPath);
+
+            WriteLog.Info("Nightingale started.");
         }
     }
 }
