@@ -6,6 +6,9 @@ namespace Nightingale
 {
     class AntiHacker
     {
+        //TODO Check for invalid HWID,GUID,XUID
+        //TODO Check for VPN
+
         public static bool HasBadName(Entity player)
         {
             if (File.Exists(Paths.AntiHackerPath + "badnames.txt"))
@@ -43,6 +46,20 @@ namespace Nightingale
             {
                 File.Create(Paths.AntiHackerPath + "badIPs.txt");
             }
+            return false;
+        }
+
+        public static bool HasInvalidID(Entity player)
+        {
+            string hwid = player.HWID;
+            string guid = player.GUID.ToString();
+            string uid = player.UserID.ToString();
+
+            if(hwid.Trim() == "" || guid.Trim() == "" || uid.Trim() == "")
+            {
+                return true;
+            }
+
             return false;
         }
     }

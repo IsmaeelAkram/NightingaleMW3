@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InfinityScript;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,18 +7,58 @@ using System.Threading.Tasks;
 
 namespace Nightingale
 {
+
     class Command
     {
-        private Func<int> function;
+        private Action<Entity, string[], string> function;
+        public string name;
 
-        public Command(string name, Func<int> function_)
+        public Command(string name_, Action<Entity, string[], string> function_)
         {
             function = function_;
+            name = name_;
+        }
+
+        public void Run(Entity sender, string message)
+        {
+            string command = message.Substring(1).Split(' ')[0].ToLowerInvariant();
+            string[] args = message.Substring(1).Split(' ');
+            function(sender, args, command);
         }
     }
 
-    class Commands
+    static class Commands
     {
+        public static List<Command> CommandList;
 
+        public static void InitCommands()
+        {
+            WriteLog.Info("Initializing commands...");
+
+            CommandList.Add(new Command("ping", (sender, args, command) =>
+            {
+                Chat.SayToPlayer(sender, "^1Pong!");
+            }));
+
+            WriteLog.Info("Initialized commands...");
+        }
+
+        public static Command FindCommand(string cmdname)
+        {
+            foreach (Command cmd in CommandList)
+                if (cmd.name == cmdname)
+                    return cmd;
+            return null;
+        }
+
+        public static void ProcessCommand(Entity sender, string name, string message)
+        {
+            string commandname = message.Substring(1).Split(' ')[0].ToLowerInvariant();
+            WriteLog.Info(sender.Name + " attempted " + commandname);
+
+            Command commandToBeRun;
+            commandToBeRun = FindCommand(commandname);
+            commandToBeRun.Run(sender, message);
+        }
     }
 }
