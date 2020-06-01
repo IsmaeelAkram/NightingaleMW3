@@ -25,7 +25,7 @@ namespace Nightingale
                 return;
             });
             if (AntiHacker.HasInvalidID(player)) AfterDelay(2000, () => {
-                Moderation.KickPlayer(player, Messages.BadIP);
+                Moderation.KickPlayer(player, Messages.BadID);
                 WriteLog.Warning($"{player.Name} has been kicked for a bad ID (HWID,GUID,UID).");
                 return;
             });

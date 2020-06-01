@@ -1,13 +1,9 @@
 ﻿using InfinityScript;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nightingale
 {
-
     class Command
     {
         private Action<Entity, string[], string> function;
@@ -29,16 +25,24 @@ namespace Nightingale
 
     static class Commands
     {
-        public static List<Command> CommandList;
+        public static List<Command> CommandList = new List<Command>();
 
         public static void InitCommands()
         {
             WriteLog.Info("Initializing commands...");
 
+
+
             CommandList.Add(new Command("ping", (sender, args, command) =>
             {
                 Chat.SayToPlayer(sender, "^1Pong!");
             }));
+
+            CommandList.Add(new Command("vpn", (sender, args, command) =>
+            {
+                string IP = args[1];
+            }));
+
 
             WriteLog.Info("Initialized commands...");
         }

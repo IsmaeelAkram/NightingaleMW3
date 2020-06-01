@@ -28,11 +28,11 @@ namespace Nightingale
         {
             public static void SayToAll(string message)
             {
-                Utilities.RawSayAll(message);
+                Utilities.RawSayAll(Prefixes.ANNOUNCEMENT + message);
             }
             public static void SayToPlayer(Entity player, string message)
             {
-                Utilities.RawSayTo(player, message);
+                Utilities.RawSayTo(player, Prefixes.PM + message);
             }
         }
 
