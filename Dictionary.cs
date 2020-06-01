@@ -8,8 +8,8 @@
 
     class Prefixes
     {
-        public static string PM = "^7[^5PM^7]";
-        public static string ANNOUNCEMENT = "^7[^5Nightingale^7]";
+        public static string PM = "^7[^5PM^7] ";
+        public static string ANNOUNCEMENT = "^7[^5Nightingale^7] ";
     }
 
     class Messages

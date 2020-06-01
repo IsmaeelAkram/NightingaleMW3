@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AntiHacker.cs" />
+    <Compile Include="AutoWarn.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Dictionary.cs" />
     <Compile Include="Main.cs" />

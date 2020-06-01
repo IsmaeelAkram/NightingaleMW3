@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Nightingale
 {
-    class Command
+    public class Command
     {
         private Action<Entity, string[], string> function;
         public string name;
@@ -23,11 +23,11 @@ namespace Nightingale
         }
     }
 
-    static class Commands
+    public partial class Nightingale
     {
-        public static List<Command> CommandList = new List<Command>();
+        public List<Command> CommandList = new List<Command>();
 
-        public static void InitCommands()
+        public void InitCommands()
         {
             WriteLog.Info("Initializing commands...");
 
@@ -35,19 +35,32 @@ namespace Nightingale
 
             CommandList.Add(new Command("ping", (sender, args, command) =>
             {
-                Chat.SayToPlayer(sender, "^1Pong!");
+                PrivateMessage(sender, "^1Pong!");
             }));
 
-            CommandList.Add(new Command("vpn", (sender, args, command) =>
+            CommandList.Add(new Command("help", (sender, args, command) =>
             {
-                string IP = args[1];
+                string helpMessage = "^3";
+                foreach(Command cmd in CommandList)
+                {
+                    helpMessage = helpMessage + cmd.name + ", ";
+                }
+                PrivateMessage(sender, "^3Commands for ^1Nightingale^3:");
+                PrivateMessage(sender, helpMessage);
+            }));
+
+            CommandList.Add(new Command("kick", (sender, args, command) =>
+            {
+                Entity target = FindSinglePlayer(args[1]);
+                string reason = String.Join(" ", args).Replace(command, "");
+                KickPlayer(target, reason);
             }));
 
 
-            WriteLog.Info("Initialized commands...");
+            WriteLog.Info("Initialized commands.");
         }
 
-        public static Command FindCommand(string cmdname)
+        public Command FindCommand(string cmdname)
         {
             foreach (Command cmd in CommandList)
                 if (cmd.name == cmdname)
@@ -55,7 +68,7 @@ namespace Nightingale
             return null;
         }
 
-        public static void ProcessCommand(Entity sender, string name, string message)
+        public void ProcessCommand(Entity sender, string name, string message)
         {
             string commandname = message.Substring(1).Split(' ')[0].ToLowerInvariant();
             WriteLog.Info(sender.Name + " attempted " + commandname);
