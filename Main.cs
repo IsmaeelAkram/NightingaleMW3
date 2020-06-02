@@ -5,7 +5,7 @@ namespace Nightingale
 {
     public partial class Nightingale : BaseScript
     {
-        public Nightingale() : base()
+        public Nightingale()
         {
             OnServerStart();
             PlayerConnected += OnPlayerConnect;
