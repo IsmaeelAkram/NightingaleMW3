@@ -35,7 +35,7 @@ namespace Nightingale
 
             CommandList.Add(new Command("ping", (sender, args) =>
             {
-                SayToPlayer(sender, "^1Pong!");
+                PrivateMessage(sender, "^1Pong!");
             }));
 
             CommandList.Add(new Command("help", (sender, args) =>
@@ -45,8 +45,8 @@ namespace Nightingale
                 {
                     helpMessage = helpMessage + cmd.name + ", ";
                 }
-                SayToPlayer(sender, "^3Commands for ^1Nightingale^3:");
-                SayToPlayer(sender, helpMessage);
+                PrivateMessage(sender, "^3Commands for ^1Nightingale^3:");
+                PrivateMessage(sender, helpMessage);
             }));
             
             CommandList.Add(new Command("kick", (sender, args) =>
@@ -71,6 +71,7 @@ namespace Nightingale
                 ChangeMap(args[0]);
             }));
 
+<<<<<<< HEAD
             CommandList.Add(new Command("myalias", (sender, args) =>
             {
                 string alias = String.Join(" ", args).Trim();
@@ -93,6 +94,8 @@ namespace Nightingale
                 }));
             }));
 
+=======
+>>>>>>> parent of 1a503e1... Change to InfinityScript 1.5.3 and add real alias
             WriteLog.Info("Initialized commands.");
         }
 

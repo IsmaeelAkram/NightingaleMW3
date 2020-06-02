@@ -29,13 +29,22 @@ namespace Nightingale
 
     public partial class Nightingale
     {
-        public static void SayToAll(string message)
+        public static void Announce(string message)
         {
             Utilities.RawSayAll(Config.GetString("announcement_prefix") + message);
         }
-        public static void SayToPlayer(Entity player, string message)
+        public static void PrivateMessage(Entity player, string message)
         {
             Utilities.RawSayTo(player, Config.GetString("pm_prefix") + message);
+        }
+
+        public static void SayToAll(string message)
+        {
+            Utilities.RawSayAll(message);
+        }
+        public static void SayToPlayer(Entity player, string message)
+        {
+            Utilities.RawSayTo(player, message);
         }
 
         public static void ChangeMap(string mapName)
@@ -47,7 +56,7 @@ namespace Nightingale
         {
             Utilities.ExecuteCommand($"kick \"{player.Name}\" {reason}");
             WriteLog.Info($"{player.Name} has been kicked for {reason}.");
-            SayToAll(Config.GetString("kick_message"));
+            Announce(Config.GetString("kick_message"));
         }
 
         public List<Entity> FindPlayers(string identifier, Entity sender = null)

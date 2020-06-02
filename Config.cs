@@ -33,8 +33,11 @@ namespace Nightingale
             {"bad_ip", "^1Proxies and VPNs are not allowed on this server!"},
             {"bad_name", "^1Bye hacker!"},
             {"bad_id", "^1Bye hacker!"},
+<<<<<<< HEAD
             {"alias_success", "^5Changed alias to ^7<var>." },
             {"alias_too_long", "^7<var> ^5is over 15 characters. Not a valid alias." },
+=======
+>>>>>>> parent of 1a503e1... Change to InfinityScript 1.5.3 and add real alias
 
             {"announcement_prefix", "^7[^5Nightingale^7] "},
             { "pm_prefix", "^7[^5PM^7] "}
@@ -63,15 +66,10 @@ namespace Nightingale
     }
     public partial class Nightingale
     {
-        public string FormatMessage(string message, Dictionary<string, string> dict)
+        public void FormatMessage(string message, Dictionary<string, string> dict)
         {
             string newMessage = "";
-            try { newMessage = message.Replace("<target>", dict["target"]); } catch { }
-            try { newMessage = message.Replace("<instigator>", dict["instigator"]); } catch { }
-            try { newMessage = message.Replace("<reason>", dict["reason"]); } catch { }
-            try { newMessage = message.Replace("<var>", dict["var"]); } catch { }
-
-            return newMessage;
+            newMessage = message.Replace("<target>", dict["target"]);
         }
 
         public void CreateDirsAndFiles()
