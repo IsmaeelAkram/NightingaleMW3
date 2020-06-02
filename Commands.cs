@@ -71,7 +71,7 @@ namespace Nightingale
                 ChangeMap(args[0]);
             }));
 
-<<<<<<< HEAD
+
             CommandList.Add(new Command("myalias", (sender, args) =>
             {
                 string alias = String.Join(" ", args).Trim();
@@ -94,8 +94,7 @@ namespace Nightingale
                 }));
             }));
 
-=======
->>>>>>> parent of 1a503e1... Change to InfinityScript 1.5.3 and add real alias
+
             WriteLog.Info("Initialized commands.");
         }
 
