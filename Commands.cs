@@ -35,7 +35,7 @@ namespace Nightingale
 
             CommandList.Add(new Command("ping", (sender, args) =>
             {
-                SayToPlayer(sender, "^1Pong!");
+                PrivateMessage(sender, "^1Pong!");
             }));
 
             CommandList.Add(new Command("help", (sender, args) =>
@@ -45,8 +45,8 @@ namespace Nightingale
                 {
                     helpMessage = helpMessage + cmd.name + ", ";
                 }
-                SayToPlayer(sender, "^3Commands for ^1Nightingale^3:");
-                SayToPlayer(sender, helpMessage);
+                PrivateMessage(sender, "^3Commands for ^1Nightingale^3:");
+                PrivateMessage(sender, helpMessage);
             }));
             
             CommandList.Add(new Command("kick", (sender, args) =>
@@ -71,22 +71,29 @@ namespace Nightingale
                 ChangeMap(args[0]);
             }));
 
+
             CommandList.Add(new Command("myalias", (sender, args) =>
             {
                 string alias = String.Join(" ", args).Trim();
                 if (alias == "")
                 {
                     alias = sender.Name;
-                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>() {
+                }
+
+                if(alias.Length >= 15)
+                {
+                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_too_long"), new Dictionary<string, string>() {
                         { "var", alias }
                     }));
                     return;
                 }
+    
                 sender.Name = alias;
                 SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>() {
-                        { "var", alias }
+                    { "var", alias }
                 }));
             }));
+
 
             WriteLog.Info("Initialized commands.");
         }

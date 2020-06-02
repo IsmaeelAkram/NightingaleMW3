@@ -11,40 +11,26 @@ namespace Nightingale
 
         public static bool HasBadName(Entity player)
         {
-            if (File.Exists(Config.GetPath("anti_hacker") + "badnames.txt"))
+            string[] names = File.ReadAllLines(Config.GetPath("anti_hacker") + "badnames.txt");
+            foreach(string name in names)
             {
-                string[] names = File.ReadAllLines(Config.GetPath("anti_hacker") + "badnames.txt");
-                foreach(string name in names)
+                if(player.Name == name)
                 {
-                    if(player.Name == name)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-            }
-            else
-            {
-                File.Create(Config.GetPath("anti_hacker") + "badnames.txt");
             }
             return false;
         }
 
         public static bool HasBadIP(Entity player)
         {
-            if (File.Exists(Config.GetPath("anti_hacker") + "badIPs.txt"))
+            string[] IPs = File.ReadAllLines(Config.GetPath("anti_hacker") + "badIPs.txt");
+            foreach (string IP in IPs)
             {
-                string[] IPs = File.ReadAllLines(Config.GetPath("anti_hacker") + "badIPs.txt");
-                foreach (string IP in IPs)
+                if (player.IP.Address.ToString() == IP)
                 {
-                    if (player.IP.Address.ToString() == IP)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-            }
-            else
-            {
-                File.Create(Config.GetPath("anti_hacker") + "badIPs.txt");
             }
             return false;
         }

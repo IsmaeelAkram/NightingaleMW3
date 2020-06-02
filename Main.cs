@@ -1,4 +1,5 @@
 ﻿using InfinityScript;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Nightingale
@@ -19,20 +20,22 @@ namespace Nightingale
                 WriteLog.Warning($"{player.Name} has been kicked for a bad name.");
                 return;
             });
-            if (AntiHacker.HasBadIP(player)) AfterDelay(2000, () => {
+            if (AntiHacker.HasBadIP(player)) AfterDelay(2000, () =>
+            {
                 KickPlayer(player, Config.GetString("bad_ip"));
-                WriteLog.Warning($"{player.Name} has been kicked for a bad IP (VPN, proxy).");
+                WriteLog.Warning($"{player.Name} has been kicked for a bad ip (vpn, proxy).");
                 return;
             });
-            if (AntiHacker.HasInvalidID(player)) AfterDelay(2000, () => {
+            if (AntiHacker.HasInvalidID(player)) AfterDelay(2000, () =>
+            {
                 KickPlayer(player, Config.GetString("bad_id"));
-                WriteLog.Warning($"{player.Name} has been kicked for a bad ID (HWID,GUID,UID).");
+                WriteLog.Warning($"{player.Name} has been kicked for a bad id (hwid,guid,uid).");
                 return;
             });
 
             player.SetClientDvar("cg_objectiveText", "^3This server is powered by ^1Nightingale^3.");
-            player.SetClientDvar("waypointIconWidth", "1");
-            player.SetClientDvar("waypointIconHeight", "1");
+            player.SetClientDvar("waypointIconWidth", "0");
+            player.SetClientDvar("waypointIconHeight", "0");
         }
 
         public void OnPlayerDisconnect(Entity player)
@@ -45,7 +48,7 @@ namespace Nightingale
             if (!message.StartsWith("!"))
             {
                 WriteLog.Info($"{player.Name}: {message}");
-                Utilities.RawSayAll($"{player.Name}: {message}");
+                SayToAll($"{player.Name}: {message}");
                 return EventEat.EatGame;
             }
 
@@ -57,10 +60,9 @@ namespace Nightingale
         public void OnServerStart()
         {
             WriteLog.Info("Nightingale starting...");
-            if (!Directory.Exists(Config.GetPath("main"))) Directory.CreateDirectory(Config.GetPath("main"));
-            if (!Directory.Exists(Config.GetPath("anti_hacker"))) Directory.CreateDirectory(Config.GetPath("anti_hacker"));
 
             InitCommands();
+            //CreateDirsAndFiles();
 
             WriteLog.Info("Nightingale started.");
         }
