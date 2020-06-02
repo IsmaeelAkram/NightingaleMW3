@@ -16,6 +16,7 @@ namespace Nightingale
             {"bad_ip", "^1Proxies and VPNs are not allowed on this server!"},
             {"bad_name", "^1Bye hacker!"},
             {"bad_id", "^1Bye hacker!"},
+            {"alias_success", "^5Changed alias to ^7<var>." },
 
             {"announcement_prefix", "^7[^5Nightingale^7] "},
             { "pm_prefix", "^7[^5PM^7] "}
@@ -45,10 +46,15 @@ namespace Nightingale
 
     public partial class Nightingale
     {
-        public void FormatMessage(string message, Dictionary<string, string> dict)
+        public string FormatMessage(string message, Dictionary<string, string> dict)
         {
             string newMessage = "";
-            newMessage = message.Replace("<target>", dict["target"]);
+            try { newMessage = message.Replace("<target>", dict["target"]); } catch { }
+            try { newMessage = message.Replace("<instigator>", dict["instigator"]); } catch { }
+            try { newMessage = message.Replace("<reason>", dict["reason"]); } catch { }
+            try { newMessage = message.Replace("<var>", dict["var"]); } catch { }
+
+            return newMessage;
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Nightingale
             if (!message.StartsWith("!"))
             {
                 WriteLog.Info($"{player.Name}: {message}");
-                SayToAll($"{player.Name}: {message}");
+                Utilities.RawSayAll($"{player.Name}: {message}");
                 return EventEat.EatGame;
             }
 
