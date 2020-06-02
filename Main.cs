@@ -1,4 +1,5 @@
 ﻿using InfinityScript;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Nightingale
@@ -31,8 +32,8 @@ namespace Nightingale
             });
 
             player.SetClientDvar("cg_objectiveText", "^3This server is powered by ^1Nightingale^3.");
-            player.SetClientDvar("waypointIconWidth", "1");
-            player.SetClientDvar("waypointIconHeight", "1");
+            player.SetClientDvar("waypointIconWidth", "0");
+            player.SetClientDvar("waypointIconHeight", "0");
         }
 
         public void OnPlayerDisconnect(Entity player)
@@ -57,8 +58,19 @@ namespace Nightingale
         public void OnServerStart()
         {
             WriteLog.Info("Nightingale starting...");
-            if (!Directory.Exists(Config.GetPath("main"))) Directory.CreateDirectory(Config.GetPath("main"));
-            if (!Directory.Exists(Config.GetPath("anti_hacker"))) Directory.CreateDirectory(Config.GetPath("anti_hacker"));
+
+            // Create directories
+            WriteLog.Info("Creating Nightingale directories...");
+            foreach (string directory in Config.Paths)
+            {
+                if (!Directory.Exists(directory.Value)) Directory.CreateDirectory(directory.Value);
+            }
+            // Create files
+            WriteLog.Info("Creating Nightingale files...");
+            foreach (string file in Config.Files)
+            {
+                if (!File.Exists(file)) File.Create(file);
+            }
 
             InitCommands();
 

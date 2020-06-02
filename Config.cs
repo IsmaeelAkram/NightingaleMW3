@@ -4,6 +4,21 @@ namespace Nightingale
 {
     public class Config
     {
+        public static List<string> Files = new List<string>()
+        {
+            GetPath("anti_hacker") + "badnames.txt",
+            GetPath("anti_hacker") + "badIPs.txt"
+        };
+
+        public static Dictionary<string, string> Paths = new Dictionary<string, string>()
+        {
+            { "main","scripts\\Nightingale\\" },
+            { "anti_hacker", "scripts\\Nightingale\\AntiHacker\\" },
+            { "utils", "scripts\\Nightingale\\Utils\\" }
+        };
+
+
+
         public static Dictionary<string, bool> DefaultSettings = new Dictionary<string, bool>()
         {
             {"hidebombicons", true },
@@ -17,15 +32,10 @@ namespace Nightingale
             {"bad_name", "^1Bye hacker!"},
             {"bad_id", "^1Bye hacker!"},
             {"alias_success", "^5Changed alias to ^7<var>." },
+            {"alias_too_long", "^7<var> ^5is over 15 characters. Not a valid alias." },
 
             {"announcement_prefix", "^7[^5Nightingale^7] "},
             { "pm_prefix", "^7[^5PM^7] "}
-        };
-
-        public static Dictionary<string, string> Paths = new Dictionary<string, string>()
-        {
-            { "main","scripts\\Nightingale\\" },
-            { "anti_hacker", "scripts\\Nightingale\\AntiHacker\\" }
         };
 
         public static bool GetBool(string name)
@@ -43,7 +53,6 @@ namespace Nightingale
             return Paths[name];
         }
     }
-
     public partial class Nightingale
     {
         public string FormatMessage(string message, Dictionary<string, string> dict)

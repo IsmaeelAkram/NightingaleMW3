@@ -77,14 +77,19 @@ namespace Nightingale
                 if (alias == "")
                 {
                     alias = sender.Name;
-                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>() {
+                }
+
+                if(alias.Length >= 15)
+                {
+                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_too_long"), new Dictionary<string, string>() {
                         { "var", alias }
                     }));
                     return;
                 }
+    
                 sender.Name = alias;
                 SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>() {
-                        { "var", alias }
+                    { "var", alias }
                 }));
             }));
 
