@@ -2,7 +2,7 @@
 
 namespace Nightingale
 {
-    public class Config
+    public static class Config
     {
         public static List<string> Files = new List<string>()
         {
