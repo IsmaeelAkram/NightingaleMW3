@@ -35,7 +35,7 @@ namespace Nightingale
 
             CommandList.Add(new Command("ping", (sender, args) =>
             {
-                PrivateMessage(sender, "^1Pong!");
+                SayToPlayer(sender, "^1Pong!");
             }));
 
             CommandList.Add(new Command("help", (sender, args) =>
@@ -45,8 +45,8 @@ namespace Nightingale
                 {
                     helpMessage = helpMessage + cmd.name + ", ";
                 }
-                PrivateMessage(sender, "^3Commands for ^1Nightingale^3:");
-                PrivateMessage(sender, helpMessage);
+                SayToPlayer(sender, "^3Commands for ^1Nightingale^3:");
+                SayToPlayer(sender, helpMessage);
             }));
             
             CommandList.Add(new Command("kick", (sender, args) =>
@@ -80,7 +80,7 @@ namespace Nightingale
                     alias = sender.Name;
                 }
 
-                if(alias.Length >= 15)
+                if(alias.Length > 15)
                 {
                     SayToPlayer(sender, FormatMessage(Config.GetString("alias_too_long"), new Dictionary<string, string>() {
                         { "var", alias }
