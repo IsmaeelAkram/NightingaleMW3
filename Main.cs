@@ -31,6 +31,8 @@ namespace Nightingale
             });
 
             player.SetClientDvar("cg_objectiveText", "^3This server is powered by ^1Nightingale^3.");
+            player.SetClientDvar("waypointIconWidth", "1");
+            player.SetClientDvar("waypointIconHeight", "1");
         }
 
         public void OnPlayerDisconnect(Entity player)
@@ -54,8 +56,9 @@ namespace Nightingale
 
         public void OnServerStart()
         {
-            if(!Directory.Exists(Config.GetString("main"))) Directory.CreateDirectory(Config.GetString("main"));
-            if (!Directory.Exists(Config.GetString("anti_hacker"))) Directory.CreateDirectory(Config.GetString("anti_hacker"));
+            WriteLog.Info("Nightingale starting...");
+            if (!Directory.Exists(Config.GetPath("main"))) Directory.CreateDirectory(Config.GetPath("main"));
+            if (!Directory.Exists(Config.GetPath("anti_hacker"))) Directory.CreateDirectory(Config.GetPath("anti_hacker"));
 
             InitCommands();
 

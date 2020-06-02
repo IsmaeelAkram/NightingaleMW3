@@ -11,9 +11,9 @@ namespace Nightingale
 
         public static bool HasBadName(Entity player)
         {
-            if (File.Exists(Config.GetString("anti_hacker") + "badnames.txt"))
+            if (File.Exists(Config.GetPath("anti_hacker") + "badnames.txt"))
             {
-                string[] names = File.ReadAllLines(Config.GetString("anti_hacker") + "badnames.txt");
+                string[] names = File.ReadAllLines(Config.GetPath("anti_hacker") + "badnames.txt");
                 foreach(string name in names)
                 {
                     if(player.Name == name)
@@ -24,16 +24,16 @@ namespace Nightingale
             }
             else
             {
-                File.Create(Config.GetString("anti_hacker") + "badnames.txt");
+                File.Create(Config.GetPath("anti_hacker") + "badnames.txt");
             }
             return false;
         }
 
         public static bool HasBadIP(Entity player)
         {
-            if (File.Exists(Config.GetString("anti_hacker") + "badIPs.txt"))
+            if (File.Exists(Config.GetPath("anti_hacker") + "badIPs.txt"))
             {
-                string[] IPs = File.ReadAllLines(Config.GetString("anti_hacker") + "badIPs.txt");
+                string[] IPs = File.ReadAllLines(Config.GetPath("anti_hacker") + "badIPs.txt");
                 foreach (string IP in IPs)
                 {
                     if (player.IP.Address.ToString() == IP)
@@ -44,7 +44,7 @@ namespace Nightingale
             }
             else
             {
-                File.Create(Config.GetString("anti_hacker") + "badIPs.txt");
+                File.Create(Config.GetPath("anti_hacker") + "badIPs.txt");
             }
             return false;
         }

@@ -47,10 +47,15 @@ namespace Nightingale
             Utilities.RawSayTo(player, message);
         }
 
+        public static void ChangeMap(string mapName)
+        {
+            Utilities.ExecuteCommand($"map mp_{mapName}");
+        }
 
         public static void KickPlayer(Entity player, string reason)
         {
             Utilities.ExecuteCommand($"kick \"{player.Name}\" {reason}");
+            WriteLog.Info($"{player.Name} has been kicked for {reason}.");
             Announce(Config.GetString("kick_message"));
         }
 

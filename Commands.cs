@@ -53,7 +53,7 @@ namespace Nightingale
             {
                 Entity target = FindSinglePlayer(args[0]);
 
-                string reason = String.Join(" ", args);
+                string reason = String.Join(" ", args).Replace(args[0], "").Trim();
                 if(reason == "")
                 {
                     reason = "no reason";
@@ -61,6 +61,15 @@ namespace Nightingale
                 KickPlayer(target, reason);
             }));
 
+            CommandList.Add(new Command("res", (sender, args) =>
+            {
+                Utilities.ExecuteCommand("fast_restart");
+            }));
+
+            CommandList.Add(new Command("map", (sender, args) =>
+            {
+                ChangeMap(args[0]);
+            }));
 
             WriteLog.Info("Initialized commands.");
         }
