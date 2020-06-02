@@ -6,10 +6,10 @@ namespace Nightingale
 {
     public class Command
     {
-        private Action<Entity, string[], string> function;
+        private Action<Entity, string[]> function;
         public string name;
 
-        public Command(string name_, Action<Entity, string[], string> function_)
+        public Command(string name_, Action<Entity, string[]> function_)
         {
             function = function_;
             name = name_;
@@ -18,8 +18,8 @@ namespace Nightingale
         public void Run(Entity sender, string message)
         {
             string command = message.Substring(1).Split(' ')[0].ToLowerInvariant();
-            string[] args = message.Substring(1).Split(' ');
-            function(sender, args, command);
+            string[] args = message.Substring(1).Replace(command, "").Trim().Split(' ');
+            function(sender, args);
         }
     }
 
@@ -33,12 +33,12 @@ namespace Nightingale
 
 
 
-            CommandList.Add(new Command("ping", (sender, args, command) =>
+            CommandList.Add(new Command("ping", (sender, args) =>
             {
                 PrivateMessage(sender, "^1Pong!");
             }));
 
-            CommandList.Add(new Command("help", (sender, args, command) =>
+            CommandList.Add(new Command("help", (sender, args) =>
             {
                 string helpMessage = "^3";
                 foreach(Command cmd in CommandList)
@@ -48,11 +48,16 @@ namespace Nightingale
                 PrivateMessage(sender, "^3Commands for ^1Nightingale^3:");
                 PrivateMessage(sender, helpMessage);
             }));
-
-            CommandList.Add(new Command("kick", (sender, args, command) =>
+            
+            CommandList.Add(new Command("kick", (sender, args) =>
             {
-                Entity target = FindSinglePlayer(args[1]);
-                string reason = String.Join(" ", args).Replace(command, "");
+                Entity target = FindSinglePlayer(args[0]);
+
+                string reason = String.Join(" ", args);
+                if(reason == "")
+                {
+                    reason = "no reason";
+                }
                 KickPlayer(target, reason);
             }));
 

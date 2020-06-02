@@ -31,11 +31,11 @@ namespace Nightingale
     {
         public static void Announce(string message)
         {
-            Utilities.RawSayAll(Prefixes.ANNOUNCEMENT + message);
+            Utilities.RawSayAll(Config.GetString("announcement_prefix") + message);
         }
         public static void PrivateMessage(Entity player, string message)
         {
-            Utilities.RawSayTo(player, Prefixes.PM + message);
+            Utilities.RawSayTo(player, Config.GetString("pm_prefix") + message);
         }
 
         public static void SayToAll(string message)
@@ -51,6 +51,7 @@ namespace Nightingale
         public static void KickPlayer(Entity player, string reason)
         {
             Utilities.ExecuteCommand($"kick \"{player.Name}\" {reason}");
+            Announce(Config.GetString("kick_message"));
         }
 
         public List<Entity> FindPlayers(string identifier, Entity sender = null)

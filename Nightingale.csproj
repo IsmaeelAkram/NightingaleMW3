@@ -54,7 +54,7 @@
     <Compile Include="AntiHacker.cs" />
     <Compile Include="AutoWarn.cs" />
     <Compile Include="Commands.cs" />
-    <Compile Include="Dictionary.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />

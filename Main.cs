@@ -5,7 +5,7 @@ namespace Nightingale
 {
     public partial class Nightingale : BaseScript
     {
-        public Nightingale()
+        public Nightingale() : base()
         {
             OnServerStart();
             PlayerConnected += OnPlayerConnect;
@@ -15,22 +15,20 @@ namespace Nightingale
         public void OnPlayerConnect(Entity player)
         {
             if (AntiHacker.HasBadName(player)) AfterDelay(2000, () => {
-                KickPlayer(player, Messages.BadName);
+                KickPlayer(player, Config.GetString("bad_name"));
                 WriteLog.Warning($"{player.Name} has been kicked for a bad name.");
                 return;
             });
             if (AntiHacker.HasBadIP(player)) AfterDelay(2000, () => {
-                KickPlayer(player, Messages.BadIP);
+                KickPlayer(player, Config.GetString("bad_ip"));
                 WriteLog.Warning($"{player.Name} has been kicked for a bad IP (VPN, proxy).");
                 return;
             });
             if (AntiHacker.HasInvalidID(player)) AfterDelay(2000, () => {
-                KickPlayer(player, Messages.BadID);
+                KickPlayer(player, Config.GetString("bad_id"));
                 WriteLog.Warning($"{player.Name} has been kicked for a bad ID (HWID,GUID,UID).");
                 return;
             });
-
-            Players.Add(player);
 
             player.SetClientDvar("cg_objectiveText", "^3This server is powered by ^1Nightingale^3.");
         }
@@ -56,8 +54,8 @@ namespace Nightingale
 
         public void OnServerStart()
         {
-            if(!Directory.Exists(Paths.MainPath)) Directory.CreateDirectory(Paths.MainPath);
-            if (!Directory.Exists(Paths.AntiHackerPath)) Directory.CreateDirectory(Paths.AntiHackerPath);
+            if(!Directory.Exists(Config.GetString("main"))) Directory.CreateDirectory(Config.GetString("main"));
+            if (!Directory.Exists(Config.GetString("anti_hacker"))) Directory.CreateDirectory(Config.GetString("anti_hacker"));
 
             InitCommands();
 
