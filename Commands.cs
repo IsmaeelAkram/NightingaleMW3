@@ -106,7 +106,15 @@ namespace Nightingale
 
             Command commandToBeRun;
             commandToBeRun = FindCommand(commandname);
-            commandToBeRun.Run(sender, message);
+
+            if (commandToBeRun == null)
+            {
+                SayToPlayer(sender, Config.GetString("unknown_cmd"));
+            }
+            else
+            {
+                commandToBeRun.Run(sender, message);
+            }
         }
     }
 }
