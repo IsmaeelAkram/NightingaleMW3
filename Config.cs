@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Nightingale
 {
@@ -33,6 +35,8 @@ namespace Nightingale
 
         public static Dictionary<string, string> Files = new Dictionary<string, string>()
         {
+            { "lang", GetPath("main") + "lang.txt" },
+            { "settings", GetPath("main") + "settings.txt" },
             { "bad_names", GetPath("anti_hacker") + "badnames.txt" },
             { "bad_ips", GetPath("anti_hacker") + "badIPs.txt" },
             { "aliases", GetPath("utils") + "aliases.txt" },
@@ -51,12 +55,41 @@ namespace Nightingale
         public static string GetPath(string name)
         {
             return Paths[name];
-
         }
 
         public static string GetFile(string name)
         {
             return Files[name];
+        }
+
+        public static void PutDefaultValues(string fileKey)
+        {
+            WriteLog.Info("Putting default values...");
+            if (fileKey == "settings")
+            {
+                WriteLog.Info("Putting default values for settings.");
+                foreach (var setting in DefaultSettings)
+                {
+                    WriteLog.Info($"Writing {setting.Key} to settings.");
+                    File.AppendAllText(GetFile("settings"), $"{setting.Key}={setting.Value}" + Environment.NewLine);
+                }
+                return;
+            }
+            if (fileKey == "lang")
+            {
+                WriteLog.Info("Putting default values for lang.");
+                foreach (var lang in DefaultLang)
+                {
+                    WriteLog.Info($"Writing {lang.Key} to lang.");
+                    File.AppendAllText(GetFile("lang"), $"{lang.Key}={lang.Value}" + Environment.NewLine);
+                }
+                return;
+            }
+            else
+            {
+                WriteLog.Info($"{fileKey} does not have any specified default values.");
+                return;
+            }
         }
     }
 

@@ -67,9 +67,14 @@ namespace Nightingale
             {
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             }
-            foreach (string file in Config.Files.Values)
+            foreach (var file in Config.Files)
             {
-                if (!File.Exists(file)) File.Create(file);
+                if (!File.Exists(file.Value))
+                {
+                    File.Create(file.Value);
+                    WriteLog.Info($"Creating {file.Key} file");
+                    Config.PutDefaultValues(file.Key);
+                }
             }
 
             WriteLog.Info("Nightingale started.");
