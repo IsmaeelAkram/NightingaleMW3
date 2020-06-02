@@ -9,7 +9,8 @@ namespace Nightingale
         public static List<string> Files = new List<string>()
         {
             GetPath("anti_hacker") + "badnames.txt",
-            GetPath("anti_hacker") + "badIPs.txt"
+            GetPath("anti_hacker") + "badIPs.txt",
+            GetPath("utils") + "aliases.txt"
         };
 
         public static Dictionary<string, string> Paths = new Dictionary<string, string>()
@@ -41,17 +42,23 @@ namespace Nightingale
 
         public static bool GetBool(string name)
         {
-            return DefaultSettings[name];
+            bool value;
+            DefaultSettings.TryGetValue(name, out value);
+            return value;
         }
 
         public static string GetString(string name)
         {
-            return DefaultLang[name];
+            string value;
+            DefaultLang.TryGetValue(name, out value);
+            return value;
         }
 
         public static string GetPath(string name)
         {
-            return Paths[name];
+            string value;
+            Paths.TryGetValue(name, out value);
+            return value;
         }
     }
     public partial class Nightingale

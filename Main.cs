@@ -20,16 +20,16 @@ namespace Nightingale
                 WriteLog.Warning($"{player.Name} has been kicked for a bad name.");
                 return;
             });
-            if (AntiHacker.HasBadIP(player)) AfterDelay(2000, () => {
-                KickPlayer(player, Config.GetString("bad_ip"));
-                WriteLog.Warning($"{player.Name} has been kicked for a bad IP (VPN, proxy).");
-                return;
-            });
-            if (AntiHacker.HasInvalidID(player)) AfterDelay(2000, () => {
-                KickPlayer(player, Config.GetString("bad_id"));
-                WriteLog.Warning($"{player.Name} has been kicked for a bad ID (HWID,GUID,UID).");
-                return;
-            });
+            //if (AntiHacker.HasBadIP(player)) AfterDelay(2000, () => {
+            //    KickPlayer(player, Config.GetString("bad_ip"));
+            //    WriteLog.Warning($"{player.Name} has been kicked for a bad IP (VPN, proxy).");
+            //    return;
+            //});
+            //if (AntiHacker.HasInvalidID(player)) AfterDelay(2000, () => {
+            //    KickPlayer(player, Config.GetString("bad_id"));
+            //    WriteLog.Warning($"{player.Name} has been kicked for a bad ID (HWID,GUID,UID).");
+            //    return;
+            //});
 
             player.SetClientDvar("cg_objectiveText", "^3This server is powered by ^1Nightingale^3.");
             player.SetClientDvar("waypointIconWidth", "0");
@@ -60,7 +60,7 @@ namespace Nightingale
             WriteLog.Info("Nightingale starting...");
 
             InitCommands();
-            CreateDirsAndFiles();
+            //CreateDirsAndFiles();
 
             WriteLog.Info("Nightingale started.");
         }
