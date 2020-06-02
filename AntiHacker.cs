@@ -11,7 +11,7 @@ namespace Nightingale
 
         public static bool HasBadName(Entity player)
         {
-            string[] names = File.ReadAllLines(Config.GetPath("anti_hacker") + "badnames.txt");
+            string[] names = File.ReadAllLines(Config.GetFile("bad_names"));
             foreach(string name in names)
             {
                 if(player.Name == name)
@@ -24,7 +24,7 @@ namespace Nightingale
 
         public static bool HasBadIP(Entity player)
         {
-            string[] IPs = File.ReadAllLines(Config.GetPath("anti_hacker") + "badIPs.txt");
+            string[] IPs = File.ReadAllLines(Config.GetFile("bad_names"));
             foreach (string IP in IPs)
             {
                 if (player.IP.Address.ToString() == IP)

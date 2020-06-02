@@ -27,7 +27,15 @@ namespace Nightingale
         public static Dictionary<string, string> Paths = new Dictionary<string, string>()
         {
             { "main","scripts\\Nightingale\\" },
-            { "anti_hacker", "scripts\\Nightingale\\AntiHacker\\" }
+            { "anti_hacker", "scripts\\Nightingale\\AntiHacker\\" },
+            { "utils", "scripts\\Nightingale\\Utils\\" }
+        };
+
+        public static Dictionary<string, string> Files = new Dictionary<string, string>()
+        {
+            { "bad_names", GetPath("anti_hacker") + "badnames.txt" },
+            { "bad_ips", GetPath("anti_hacker") + "badIPs.txt" },
+            { "aliases", GetPath("utils") + "aliases.txt" },
         };
 
         public static bool GetBool(string name)
@@ -43,6 +51,12 @@ namespace Nightingale
         public static string GetPath(string name)
         {
             return Paths[name];
+
+        }
+
+        public static string GetFile(string name)
+        {
+            return Files[name];
         }
     }
 

@@ -62,7 +62,15 @@ namespace Nightingale
             WriteLog.Info("Nightingale starting...");
 
             InitCommands();
-            //CreateDirsAndFiles();
+
+            foreach (string path in Config.Paths.Values)
+            {
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            }
+            foreach (string file in Config.Files.Values)
+            {
+                if (!File.Exists(file)) File.Create(file);
+            }
 
             WriteLog.Info("Nightingale started.");
         }
