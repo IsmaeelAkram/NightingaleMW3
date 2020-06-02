@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using InfinityScript;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Nightingale
 {
@@ -16,7 +18,6 @@ namespace Nightingale
             { "anti_hacker", "scripts\\Nightingale\\AntiHacker\\" },
             { "utils", "scripts\\Nightingale\\Utils\\" }
         };
-
 
 
         public static Dictionary<string, bool> DefaultSettings = new Dictionary<string, bool>()
@@ -64,6 +65,30 @@ namespace Nightingale
             try { newMessage = message.Replace("<var>", dict["var"]); } catch { }
 
             return newMessage;
+        }
+
+        public void CreateDirsAndFiles()
+        {
+            // Create directories
+            WriteLog.Info("Creating Nightingale directories...");
+            foreach (string directory in Config.Paths.Values)
+            {
+                if (!Directory.Exists(directory))
+                {
+                    WriteLog.Info("Creating " + directory + ".");
+                    Directory.CreateDirectory(directory);
+                }
+            }
+            // Create files
+            WriteLog.Info("Creating Nightingale files...");
+            foreach (string file in Config.Files)
+            {
+                if (!File.Exists(file))
+                {
+                    WriteLog.Info("Creating " + file + ".");
+                    File.Create(file);
+                }
+            }
         }
     }
 }
