@@ -14,7 +14,6 @@ namespace Nightingale
             OnServerStart();
             PlayerConnected += OnPlayerConnect;
             PlayerDisconnected += OnPlayerDisconnect;
-            OnPlayerDamageEvent += OnPlayerDamaged;
         }
 
         public void OnPlayerConnect(Entity player)
@@ -156,9 +155,16 @@ namespace Nightingale
             return EventEat.EatGame;
         }
 
-        public override void OnPlayerDamaged(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc)
+        public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc)
         {
+            if (inflictor.GetStance() == "prone")
+            {
+                WarnPlayer(inflictor, "dropshot");
+            } else if (inflictor.PlayerAds() <= 60 && inflictor.PlayerAds() > 0) {
+                WarnPlayer(inflictor, $"halfscope ({inflictor.PlayerAds()} percent)");
+            }
 
+            base.OnPlayerDamage(player, inflictor, attacker, damage, dFlags, mod, weapon, point, dir, hitLoc);
         }
 
         public void OnServerStart()
