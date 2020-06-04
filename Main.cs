@@ -9,12 +9,12 @@ namespace Nightingale
 {
     public partial class Nightingale : BaseScript
     {
-        public Nightingale()
+        public Nightingale() : base()
         {
             OnServerStart();
             PlayerConnected += OnPlayerConnect;
             PlayerDisconnected += OnPlayerDisconnect;
-            //OnPlayerKilled += OnPlayerKill;
+            OnPlayerDamageEvent += OnPlayerDamaged;
         }
 
         public void OnPlayerConnect(Entity player)
@@ -156,7 +156,7 @@ namespace Nightingale
             return EventEat.EatGame;
         }
 
-        public void OnPlayerKill(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
+        public override void OnPlayerDamaged(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc)
         {
 
         }

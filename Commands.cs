@@ -60,18 +60,7 @@ namespace Nightingale
                 SayToPlayer(sender, "^3Commands for ^1Nightingale^3:");
                 SayToPlayer(sender, helpMessage);
             }));
-            
-            CommandList.Add(new Command("kick", (sender, args) =>
-            {
-                Entity target = FindSinglePlayer(args[0]);
-
-                string reason = String.Join(" ", args).Replace(args[0], "").Trim();
-                if(reason == "")
-                {
-                    reason = "no reason";
-                }
-                KickPlayer(target, reason, sender);
-            }));
+           
 
             CommandList.Add(new Command("res", (sender, args) =>
             {
@@ -175,12 +164,44 @@ namespace Nightingale
                 string reason = String.Join(" ", args).Replace(args[0], "").Trim();
 
                 WarnPlayer(target, reason, sender);
-                SayToAll(FormatMessage(Config.GetString("warn_success"), new Dictionary<string, string>()
-                    {
-                        {"target", (string)target.Name },
-                        { "instigator", sender.Name },
-                        {"reason", reason }
-                    }));
+            }));
+
+            CommandList.Add(new Command("unwarn", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+
+                UnwarnPlayer(target, sender);
+            }));
+
+            CommandList.Add(new Command("kick", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+
+                string reason = String.Join(" ", args).Replace(args[0], "").Trim();
+                if (reason == "")
+                {
+                    reason = "no reason";
+                }
+                KickPlayer(target, reason, sender);
+            }));
+
+            CommandList.Add(new Command("ban", (sender, args) => 
+            {
+                Entity target = FindSinglePlayer(args[0]);
+                string reason = String.Join(" ", args).Replace(args[0], "").Trim();
+                if (reason == "")
+                {
+                    reason = "no reason";
+                }
+
+                BanPlayer(target, reason, sender);
+            }));
+
+            CommandList.Add(new Command("unban", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+
+                UnbanPlayer(target, sender);
             }));
 
             CommandList.Add(new Command("fakeban", (sender, args) =>
