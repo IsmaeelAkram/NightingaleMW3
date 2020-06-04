@@ -1,5 +1,8 @@
 ﻿using InfinityScript;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 
 namespace Nightingale
@@ -11,10 +14,13 @@ namespace Nightingale
             OnServerStart();
             PlayerConnected += OnPlayerConnect;
             PlayerDisconnected += OnPlayerDisconnect;
+            //OnPlayerKilled += OnPlayerKill;
         }
 
         public void OnPlayerConnect(Entity player)
         {
+            WriteLog.Info($"{player.Name} connected.");
+
             if (AntiHacker.HasBadName(player)) AfterDelay(2000, () => {
                 KickPlayer(player, Config.GetString("bad_name"));
                 WriteLog.Warning($"{player.Name} has been kicked for a bad name.");
@@ -33,9 +39,81 @@ namespace Nightingale
                 return;
             });
 
-            player.SetClientDvar("cg_objectiveText", "^3This server is powered by ^1Nightingale^3.");
+
+
+            //Check for config file
+            if (File.Exists(Config.GetPath("players") + $"{player.HWID}.dat"))
+            {
+                string[] options = File.ReadAllLines(Config.GetPath("players") + $"{player.HWID}.dat");
+                foreach (string option_ in options)
+                {
+                    string optionTrimmed = option_.Trim();
+                    string[] option = optionTrimmed.Split(new string[] { " = " }, StringSplitOptions.None);
+
+                    if (option[0] == "OriginalName")
+                    {
+                        player.SetField(option[0], option[1]);
+                    }
+                    if (option[0] == "Alias")
+                    {
+                        player.SetField(option[0], option[1].Replace("\"", ""));
+                    }
+                    if (option[0] == "GroupName")
+                    {
+                        player.SetField(option[0], option[1]);
+                    }
+
+                }
+            }
+            else
+            {
+                WriteLog.Info($"Writing data to Players/{player.HWID}.dat");
+                File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", File.ReadAllText(Config.GetPath("players") + "Default.dat").Replace("<name>", player.Name).Replace("<HWID>", player.HWID).Replace("<GUID>", player.GUID.ToString()).Replace("<XUID>", player.GetXUID()));
+                WriteLog.Info($"Done");
+
+                string[] options = File.ReadAllLines(Config.GetPath("players") + $"{player.HWID}.dat");
+                foreach (string option_ in options)
+                {
+                    string optionTrimmed = option_.Trim();
+                    string[] option = optionTrimmed.Split(new string[] { " = " }, StringSplitOptions.None);
+
+                    if (option[0] == "OriginalName")
+                    {
+                        player.SetField(option[0], option[1]);
+                    }
+                    if (option[0] == "Alias")
+                    {
+                        string alias = option[1].Replace("\"", "");
+                        player.SetField(option[0], alias);
+                    }
+                    if (option[0] == "GroupName")
+                    {
+                        player.SetField(option[0], option[1]);
+                    }
+                }
+
+                string[] groupsFile = File.ReadAllLines(Config.GetFile("groups"));
+                foreach (string group_ in groupsFile)
+                {
+                    //RankName;RankTag;Commands
+                    string[] group = group_.Split(';');
+                    if (group[0] == (string)player.GetField("GroupName"))
+                    {
+                        player.SetField("GroupPrefix", group[1]);
+                        player.SetField("GroupAvailableCommands", group[2]);
+                    }
+                }
+            }
+
+            if(!((string)player.GetField("Alias") == "None"))
+            {
+                AfterDelay(2000, () => player.Name = player.GetField("Alias").ToString().Replace("\"", ""));
+            }
+
+            // Set dvars
             player.SetClientDvar("waypointIconWidth", "0");
             player.SetClientDvar("waypointIconHeight", "0");
+            player.SetClientDvar("cg_objectiveText", $"^3This server is powered by ^1Nightingale {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}^3.");
         }
 
         public void OnPlayerDisconnect(Entity player)
@@ -45,16 +123,35 @@ namespace Nightingale
 
         public override EventEat OnSay3(Entity player, ChatType type, string name, ref string message)
         {
-            if (!message.StartsWith("!"))
+            string[] groupsFile = File.ReadAllLines(Config.GetFile("groups"));
+            foreach (string group_ in groupsFile)
             {
-                WriteLog.Info($"{player.Name}: {message}");
-                Utilities.RawSayAll($"{player.Name}: {message}");
-                return EventEat.EatGame;
+                //RankName;RankTag;Commands
+                string[] group = group_.Split(';');
+                if (group[0] == (string)player.GetField("GroupName"))
+                {
+                    if (!message.StartsWith("!"))
+                    {
+                        WriteLog.Info($"{(string)player.GetField("GroupPrefix")}{player.Name}: {message}");
+                        Utilities.RawSayAll($"{(string)player.GetField("GroupPrefix")}{player.Name}:^7 {message}");
+                        return EventEat.EatGame;
+                    }
+                    else
+                    {
+                        ProcessCommand(player, name, message, group);
+                        return EventEat.EatGame;
+                    }
+                }
             }
 
-            ProcessCommand(player, name, message);
+            SayToPlayer(player, "^1You have an invalid group. Please tell an admin to fix this");
 
             return EventEat.EatGame;
+        }
+
+        public void OnPlayerKill(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
+        {
+
         }
 
         public void OnServerStart()
@@ -65,7 +162,14 @@ namespace Nightingale
 
             foreach (string path in Config.Paths.Values)
             {
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                else
+                {
+                    continue;
+                }
             }
             foreach (var file in Config.Files)
             {
@@ -76,6 +180,8 @@ namespace Nightingale
                     Config.PutDefaultValues(file.Key);
                 }
             }
+
+            GSCFunctions.SetDvar("mapname", "^5iSnipe SND");
 
             WriteLog.Info("Nightingale started.");
         }

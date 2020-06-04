@@ -1,6 +1,8 @@
 ﻿using InfinityScript;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 namespace Nightingale
 {
@@ -58,7 +60,7 @@ namespace Nightingale
                 {
                     reason = "no reason";
                 }
-                KickPlayer(target, reason);
+                KickPlayer(target, reason, sender);
             }));
 
             CommandList.Add(new Command("res", (sender, args) =>
@@ -71,29 +73,91 @@ namespace Nightingale
                 ChangeMap(args[0]);
             }));
 
-
             CommandList.Add(new Command("myalias", (sender, args) =>
             {
-                string alias = String.Join(" ", args).Trim();
-                if (alias == "")
+                string newAlias = String.Join(" ", args);
+                if (newAlias == "")
                 {
-                    alias = sender.Name;
-                }
-
-                if(alias.Length > 15)
-                {
-                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_too_long"), new Dictionary<string, string>() {
-                        { "var", alias }
+                    SetPlayerAlias(sender, (string)sender.GetField("Alias"), (string)sender.GetField("OriginalName"));
+                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>()
+                    {
+                        {"var", (string)sender.GetField("OriginalName") }
                     }));
                     return;
                 }
-    
-                sender.Name = alias;
-                SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>() {
-                    { "var", alias }
+                else if(newAlias.Length > 15)
+                {
+                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_invalid"), new Dictionary<string, string>()
+                    {
+                        {"var", newAlias }
+                    }));
+                    return;
+                }
+                else
+                {
+                    WriteLog.None((string)sender.GetField("Alias"));
+                    SetPlayerAlias(sender, (string)sender.GetField("Alias"), newAlias);
+                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>()
+                    {
+                        {"var", newAlias }
+                    }));
+                }
+            }));
+
+            CommandList.Add(new Command("cmd", (sender, args) =>
+            {
+                Utilities.ExecuteCommand(String.Join(" ", args));
+            }));
+
+            CommandList.Add(new Command("yell", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+                target.IPrintLnBold(String.Join(" ", args).Replace(args[0], "").Trim());
+            }));
+
+            CommandList.Add(new Command("setgroup", (sender, args) => {
+                Entity target = FindSinglePlayer(args[0]);
+                string newGroup = args[1];
+
+                string[] groupsFile = File.ReadAllLines(Config.GetFile("groups"));
+
+                foreach(string group_ in groupsFile)
+                {
+                    //RankName;RankTag;Commands
+                    string[] group = group_.Split(';');
+                    if (group[0] == newGroup)
+                    {
+                        SetPlayerGroup(target, (string)target.GetField("GroupName"), newGroup);
+                        SayToPlayer(target, FormatMessage(Config.GetString("group_change_success"), new Dictionary<string, string>()
+                        {
+                            {"target", (string)target.GetField("OriginalName") },
+                            {"var", newGroup }
+                        }));
+                        return;
+                    }
+                }
+                SayToPlayer(target, FormatMessage(Config.GetString("group_not_found"), new Dictionary<string, string>()
+                {
+                    {"var", newGroup }
                 }));
             }));
 
+            CommandList.Add(new Command("admins", (sender, args) =>
+            {
+                List<Entity> admins = new List<Entity>();
+                foreach(Entity player in Players)
+                {
+                    if((string)player.GetField("GroupName") != "default")
+                    {
+                        admins.Add(player);
+                    }
+                }
+
+                foreach(Entity admin in admins)
+                {
+                    SayToPlayer(sender, $"{(string)admin.GetField("prefix")}");
+                }
+            }));
 
             WriteLog.Info("Initialized commands.");
         }
@@ -106,7 +170,7 @@ namespace Nightingale
             return null;
         }
 
-        public void ProcessCommand(Entity sender, string name, string message)
+        public void ProcessCommand(Entity sender, string name, string message, string[] group)
         {
             string commandname = message.Substring(1).Split(' ')[0].ToLowerInvariant();
             WriteLog.Info(sender.Name + " attempted " + commandname);
@@ -117,6 +181,11 @@ namespace Nightingale
             if (commandToBeRun == null)
             {
                 SayToPlayer(sender, Config.GetString("unknown_cmd"));
+            }
+            else if (!group[2].Contains(commandToBeRun.name) && !group[2].Contains("*ALL*"))
+            {
+                SayToPlayer(sender, "Insufficient privileges.");
+                return;
             }
             else
             {

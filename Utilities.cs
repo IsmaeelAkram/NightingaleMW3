@@ -1,6 +1,7 @@
 ﻿using InfinityScript;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Nightingale
@@ -43,11 +44,29 @@ namespace Nightingale
             Utilities.ExecuteCommand($"map mp_{mapName}");
         }
 
-        public static void KickPlayer(Entity player, string reason)
+        public void KickPlayer(Entity player, string reason, Entity inflictor = null)
         {
-            Utilities.ExecuteCommand($"kick \"{player.Name}\" {reason}");
-            WriteLog.Info($"{player.Name} has been kicked for {reason}.");
-            SayToAll(Config.GetString("kick_message"));
+            Utilities.ExecuteCommand($"kick \"{player.GetField("OriginalName")}\" {reason}");
+            WriteLog.Info($"{player.GetField("OriginalName")} has been kicked for {reason}.");
+
+            if (inflictor == null)
+            {
+                SayToAll(FormatMessage(Config.GetString("kick_message"), new Dictionary<string, string>()
+                {
+                    { "target", player.Name },
+                    { "instigator", "Nightingale" },
+                    { "reason", reason }
+                }));
+            }
+            else
+            {
+                SayToAll(FormatMessage(Config.GetString("kick_message"), new Dictionary<string, string>()
+                {
+                    { "target", player.Name },
+                    { "instigator", inflictor.Name },
+                    { "reason", reason }
+                }));
+            }
         }
 
         public List<Entity> FindPlayers(string identifier, Entity sender = null)
@@ -74,7 +93,7 @@ namespace Nightingale
             }
             identifier = identifier.ToLowerInvariant();
             return (from player in Players
-                    where player.Name.ToLowerInvariant().Contains(identifier)
+                    where player.GetField("OriginalName").ToString().ToLowerInvariant().Contains(identifier)
                     select player).ToList();
         }
 
@@ -84,6 +103,23 @@ namespace Nightingale
             if (players.Count != 1)
                 return null;
             return players[0];
+        }
+
+        public void SetPlayerAlias(Entity player, string old_alias, string alias)
+        {
+            player.SetField("Alias", alias);
+            player.Name = alias;
+
+            String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
+            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"\"{old_alias}\"", $"\"{alias}\""));
+        }
+
+        public void SetPlayerGroup(Entity player, string old_group, string group)
+        {
+            player.SetField("GroupName", group);
+
+            String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
+            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace(old_group, group));
         }
 
     }

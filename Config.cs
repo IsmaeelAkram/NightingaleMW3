@@ -20,7 +20,9 @@ namespace Nightingale
             {"bad_name", "^1Bye hacker!"},
             {"bad_id", "^1Bye hacker!"},
             {"alias_success", "^5Changed alias to ^7<var>." },
-            {"alias_too_long", "^7<var> ^5is over 15 characters." },
+            {"alias_invalid", "^7<var> ^5is invalid. ^7(Too long or has invalid characters)" },
+            {"group_change_success", "^5Changed ^7<target>'s ^5group to ^7<var>^5." },
+            {"group_not_found", "^1Group <var> not found." },
 
             {"announcement_prefix", "^7[^5Nightingale^7] "},
             { "pm_prefix", "^7[^5PM^7] "}
@@ -30,16 +32,17 @@ namespace Nightingale
         {
             { "main","scripts\\Nightingale\\" },
             { "anti_hacker", "scripts\\Nightingale\\AntiHacker\\" },
-            { "utils", "scripts\\Nightingale\\Utils\\" }
+            { "utils", "scripts\\Nightingale\\Utils\\" },
+            { "players", "scripts\\Nightingale\\Players\\" }
         };
 
         public static Dictionary<string, string> Files = new Dictionary<string, string>()
         {
             { "lang", GetPath("main") + "lang.txt" },
             { "settings", GetPath("main") + "settings.txt" },
+            { "groups", GetPath("main") + "groups.txt" },
             { "bad_names", GetPath("anti_hacker") + "badnames.txt" },
-            { "bad_ips", GetPath("anti_hacker") + "badIPs.txt" },
-            { "aliases", GetPath("utils") + "aliases.txt" },
+            { "bad_ips", GetPath("anti_hacker") + "badIPs.txt" }
         };
 
         public static bool GetBool(string name)
@@ -95,15 +98,11 @@ namespace Nightingale
 
     public partial class Nightingale
     {
-        public string FormatMessage(string message, Dictionary<string, string> dict)
+        public string FormatMessage(string str, Dictionary<string, string> dict)
         {
-            string newMessage = "";
-            try { newMessage = message.Replace("<target>", dict["target"]); } catch { }
-            try { newMessage = message.Replace("<instigator>", dict["instigator"]); } catch { }
-            try { newMessage = message.Replace("<reason>", dict["reason"]); } catch { }
-            try { newMessage = message.Replace("<var>", dict["var"]); } catch { }
-
-            return newMessage;
+            foreach (KeyValuePair<string, string> pair in dict)
+                str = str.Replace("<" + pair.Key + ">", pair.Value);
+            return str;
         }
     }
 }
