@@ -43,9 +43,19 @@ namespace Nightingale
             CommandList.Add(new Command("help", (sender, args) =>
             {
                 string helpMessage = "^3";
-                foreach(Command cmd in CommandList)
+                if((string)sender.GetField("GroupAvailableCommands") == "*ALL*")
                 {
-                    helpMessage = helpMessage + cmd.name + ", ";
+                    foreach (Command cmd in CommandList)
+                    {
+                        helpMessage = helpMessage + cmd.name + ", ";
+                    }
+                }
+                else
+                {
+                    foreach (string cmd in sender.GetField("GroupAvailableCommands").ToString().Split(','))
+                    {
+                        helpMessage = helpMessage + cmd + ", ";
+                    }
                 }
                 SayToPlayer(sender, "^3Commands for ^1Nightingale^3:");
                 SayToPlayer(sender, helpMessage);
@@ -127,8 +137,8 @@ namespace Nightingale
                     string[] group = group_.Split(';');
                     if (group[0] == newGroup)
                     {
-                        SetPlayerGroup(target, (string)target.GetField("GroupName"), newGroup);
-                        SayToPlayer(target, FormatMessage(Config.GetString("group_change_success"), new Dictionary<string, string>()
+                        SetPlayerGroup(target, (string)target.GetField("GroupName"), newGroup, group[1], group[2]);
+                        SayToPlayer(sender, FormatMessage(Config.GetString("group_change_success"), new Dictionary<string, string>()
                         {
                             {"target", (string)target.GetField("OriginalName") },
                             {"var", newGroup }
@@ -155,8 +165,35 @@ namespace Nightingale
 
                 foreach(Entity admin in admins)
                 {
-                    SayToPlayer(sender, $"{(string)admin.GetField("prefix")}");
+                    SayToPlayer(sender, $"{(string)admin.GetField("GroupPrefix")}{(string)admin.GetField("OriginalName")}");
                 }
+            }));
+
+            CommandList.Add(new Command("warn", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+                string reason = String.Join(" ", args).Replace(args[0], "").Trim();
+
+                WarnPlayer(target, reason, sender);
+                SayToAll(FormatMessage(Config.GetString("warn_success"), new Dictionary<string, string>()
+                    {
+                        {"target", (string)target.Name },
+                        { "instigator", sender.Name },
+                        {"reason", reason }
+                    }));
+            }));
+
+            CommandList.Add(new Command("fakeban", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+                string reason = String.Join(" ", args).Replace(args[0], "").Trim();
+
+                SayToAll(FormatMessage(Config.GetString("ban_message"), new Dictionary<string, string>()
+                    {
+                        {"target", (string)target.Name },
+                        { "instigator", sender.Name },
+                        {"reason", reason }
+                    }));
             }));
 
             WriteLog.Info("Initialized commands.");

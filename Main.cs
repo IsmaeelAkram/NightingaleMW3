@@ -62,7 +62,10 @@ namespace Nightingale
                     {
                         player.SetField(option[0], option[1]);
                     }
-
+                    if (option[0] == "Warns")
+                    {
+                        player.SetField(option[0], Int32.Parse(option[1]));
+                    }
                 }
             }
             else
@@ -90,22 +93,26 @@ namespace Nightingale
                     {
                         player.SetField(option[0], option[1]);
                     }
-                }
-
-                string[] groupsFile = File.ReadAllLines(Config.GetFile("groups"));
-                foreach (string group_ in groupsFile)
-                {
-                    //RankName;RankTag;Commands
-                    string[] group = group_.Split(';');
-                    if (group[0] == (string)player.GetField("GroupName"))
+                    if (option[0] == "Warns")
                     {
-                        player.SetField("GroupPrefix", group[1]);
-                        player.SetField("GroupAvailableCommands", group[2]);
+                        player.SetField(option[0], Int32.Parse(option[1]));
                     }
                 }
             }
 
-            if(!((string)player.GetField("Alias") == "None"))
+            string[] groupsFile = File.ReadAllLines(Config.GetFile("groups"));
+            foreach (string group_ in groupsFile)
+            {
+                //RankName;RankTag;Commands
+                string[] group = group_.Split(';');
+                if (group[0] == (string)player.GetField("GroupName"))
+                {
+                    player.SetField("GroupPrefix", group[1]);
+                    player.SetField("GroupAvailableCommands", group[2]);
+                }
+            }
+
+            if (!((string)player.GetField("Alias") == "None"))
             {
                 AfterDelay(2000, () => player.Name = player.GetField("Alias").ToString().Replace("\"", ""));
             }

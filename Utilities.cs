@@ -114,13 +114,44 @@ namespace Nightingale
             File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"\"{old_alias}\"", $"\"{alias}\""));
         }
 
-        public void SetPlayerGroup(Entity player, string old_group, string group)
+        public void SetPlayerGroup(Entity player, string old_group, string group, string groupPrefix, string groupAvailableCommands)
         {
             player.SetField("GroupName", group);
+            player.SetField("GroupPrefix", groupPrefix);
+            player.SetField("GroupAvailableCommands", groupAvailableCommands);
 
             String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
             File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace(old_group, group));
         }
 
+        public void WarnPlayer(Entity player, string reason, Entity sender = null)
+        {
+            int oldWarns = (int)player.GetField("Warns");
+            player.SetField("Warns", oldWarns + 1);
+            int newWarns = (int)player.GetField("Warns");
+
+            String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
+            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace(oldWarns.ToString(), newWarns.ToString()));
+
+            if ((int)player.GetField("Warns") == 3)
+            {
+                // TODO Change to temp-ban
+                if (sender == null)
+                {
+                    KickPlayer(player, reason);
+                    player.SetField("Warns", 0);
+                    oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
+                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace((string)player.GetField("Warns"), "0"));
+                }
+                else
+                {
+                    KickPlayer(player, reason, sender);
+                    player.SetField("Warns", 0);
+                    oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
+                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace((string)player.GetField("Warns"), "0"));
+                }
+            }
+
+        }
     }
 }

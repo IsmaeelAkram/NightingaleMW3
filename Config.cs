@@ -16,6 +16,7 @@ namespace Nightingale
             {"unknown_cmd", "^5Unknown command." },
             {"kick_message", "^7<target>^5 has been kicked by ^7<instigator>^5 for ^7<reason>."},
             {"ban_message", "^7<target>^5 has been banned by ^7<instigator>^5 for ^7<reason>."},
+            { "warn_success", "^7<target>^5 has been warned by ^7<instigator>^5 for ^7<reason>."},
             {"bad_ip", "^1Proxies and VPNs are not allowed on this server!"},
             {"bad_name", "^1Bye hacker!"},
             {"bad_id", "^1Bye hacker!"},
