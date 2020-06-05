@@ -129,38 +129,107 @@ namespace Nightingale
             }
         }
 
+        public string IsPlayerBanned(Entity player)
+        {
+            List<string> bannedPlayers = File.ReadAllLines(Config.GetFile("banned_players")).ToList();
+            foreach (string ban_ in bannedPlayers)
+            {
+                string[] ban = ban_.Split(';');
+                if (ban.Contains(player.HWID) || ban.Contains(player.GUID.ToString()) || ban.Contains(player.Name))
+                {
+                    if(ban[3] == "perm" || ban[3] == "temp")
+                    {
+                        return $"{ban[3]}";
+                    }
+                }
+            }
+            return null;
+        }
+
         public void UnbanPlayer(string player, Entity inflictor = null)
         {
-            Utilities.ExecuteCommand($"unban \"{player}\"");
-            WriteLog.Info($"{player} has been unbanned.");
+            List<string> bannedPlayers = File.ReadAllLines(Config.GetFile("banned_players")).ToList();
+            foreach(string ban in bannedPlayers)
+            {
+                if (ban.Contains(player))
+                {
+                    bannedPlayers.Remove(ban);
+                    File.WriteAllText(Config.GetFile("banned_players"), String.Join("\n", bannedPlayers));
+                    WriteLog.Info($"{player} has been unbanned.");
 
-            if(inflictor == null)
-            {
-                SayToAll(FormatMessage(Config.GetString("unban_message"), new Dictionary<string, string>()
+                    if (inflictor == null)
+                    {
+                        SayToAll(FormatMessage(Config.GetString("unban_message"), new Dictionary<string, string>()
+                        {
+                            { "target", player },
+                            { "instigator", "Nightingale" }
+                        }));
+                    }
+                    else
+                    {
+                        SayToAll(FormatMessage(Config.GetString("unban_message"), new Dictionary<string, string>()
+                        {
+                            { "target", player },
+                            { "instigator", inflictor.Name }
+                        }));
+                    }
+                }
+                else
                 {
-                    { "target", player },
-                    { "instigator", "Nightingale" }
-                }));
-            }
-            else
-            {
-                SayToAll(FormatMessage(Config.GetString("unban_message"), new Dictionary<string, string>()
-                {
-                    { "target", player },
-                    { "instigator", inflictor.Name }
-                }));
+                    SayToAll(FormatMessage(Config.GetString("unban_entry_not_found"), new Dictionary<string, string>()
+                    {
+                        {"target", player }
+                    }));
+                }
             }
         }
 
-        public void BanPlayer(Entity player, string reason, Entity inflictor = null)
+        public void TempBanPlayer(Entity player, int minutes, string reason, Entity inflictor = null)
         {
-            Utilities.ExecuteCommand($"banclient \"{player.GetEntityNumber()}\" {reason}");
-            WriteLog.Info($"{player.GetField("OriginalName")} has been banned for {reason}.");
+            // hwid;guid;name;type;endTime
+            if (reason == "")
+            {
+                reason = "no reason";
+            }
+
+            KickPlayer(player, reason, inflictor);
+            File.AppendAllText(Config.GetFile("banned_players"), $"{player.HWID};{player.GUID};{(string)player.GetField("OriginalName")};temp;{DateTime.Now.AddMinutes(minutes)}\n");
+            WriteLog.Info($"{player.GetField("OriginalName")} has been tempbanned for {reason}.");
 
             if (reason == "")
             {
                 reason = "no reason";
             }
+            if (inflictor == null)
+            {
+                SayToAll(FormatMessage(Config.GetString("tempban_message"), new Dictionary<string, string>()
+                {
+                    { "target", player.Name },
+                    { "instigator", "Nightingale" },
+                    { "reason", reason }
+                }));
+            }
+            else
+            {
+                SayToAll(FormatMessage(Config.GetString("tempban_message"), new Dictionary<string, string>()
+                {
+                    { "target", player.Name },
+                    { "instigator", inflictor.Name },
+                    { "reason", reason }
+                }));
+            }
+        }
+        public void PermBanPlayer(Entity player, string reason, Entity inflictor = null)
+        {
+            // hwid;guid;name;type;endTime
+            if (reason == "")
+            {
+                reason = "no reason";
+            }
+
+            KickPlayer(player, reason, inflictor);
+            File.AppendAllText(Config.GetFile("banned_players"), $"{player.HWID};{player.GUID};{(string)player.GetField("OriginalName")};perm;\n");
+            WriteLog.Info($"{player.GetField("OriginalName")} has been banned for {reason}.");
 
             if (inflictor == null)
             {
@@ -235,14 +304,14 @@ namespace Nightingale
                 // TODO Change to temp-ban
                 if (inflictor == null)
                 {
-                    KickPlayer(player, "^1Too many warnings");
+                    TempBanPlayer(player, 10, "^1Too many warnings");
                     player.SetField("Warns", 0);
                     oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
                     File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={newWarns}", "Warns=0"));
                 }
                 else
                 {
-                    KickPlayer(player, "^1Too many warnings", inflictor);
+                    TempBanPlayer(player, 10, "^1Too many warnings");
                     player.SetField("Warns", 0);
                     oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
                     File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={newWarns}", "Warns=0"));

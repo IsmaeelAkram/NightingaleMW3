@@ -220,7 +220,16 @@ namespace Nightingale
                 Entity target = FindSinglePlayer(args[0]);
                 string reason = String.Join(" ", args).Replace(args[0], "").Trim();
 
-                BanPlayer(target, reason, sender);
+                PermBanPlayer(target, reason, sender);
+            }));
+
+            CommandList.Add(new Command("tempban", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+                int minutes = Int32.Parse(args[1]);
+                string reason = String.Join(" ", args).Replace(args[0], "").Replace(args[1], "").Trim();
+
+                TempBanPlayer(target, minutes, reason, sender);
             }));
 
             CommandList.Add(new Command("unban", (sender, args) =>

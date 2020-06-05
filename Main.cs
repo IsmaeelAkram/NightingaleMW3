@@ -20,6 +20,20 @@ namespace Nightingale
         {
             WriteLog.Info($"{player.Name} connected.");
 
+            string bannedStatus = IsPlayerBanned(player);
+            if (bannedStatus != null) AfterDelay(2000, () =>
+            {
+                if (bannedStatus == "temp")
+                {
+                    Utilities.ExecuteCommand($"kickclient {player.EntRef} \"{Config.GetString("tempbanned_message")}\"");
+                }
+                if (bannedStatus == "perm")
+                {
+                    Utilities.ExecuteCommand($"kickclient {player.EntRef} \"{Config.GetString("banned_message")}\"");
+                }
+                WriteLog.Warning($"{player.Name} is banned. Kicked.");
+                return;
+            });
             if (AntiHacker.HasBadName(player)) AfterDelay(2000, () => {
                 KickPlayer(player, Config.GetString("bad_name"));
                 WriteLog.Warning($"{player.Name} has been kicked for a bad name.");
