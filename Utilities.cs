@@ -80,6 +80,11 @@ namespace Nightingale
             return players[0];
         }
 
+        public void SetPlayerAFK(Entity player)
+        {
+
+        }
+
         public void SetPlayerAlias(Entity player, string old_alias, string alias)
         {
             player.SetField("Alias", alias);
@@ -96,7 +101,7 @@ namespace Nightingale
             player.SetField("GroupAvailableCommands", groupAvailableCommands);
 
             String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
-            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Group={old_group}", $"Group={group}"));
+            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"GroupName={old_group}", $"GroupName={group}"));
         }
 
         public void KickPlayer(Entity player, string reason, Entity inflictor = null)
@@ -135,11 +140,23 @@ namespace Nightingale
             foreach (string ban_ in bannedPlayers)
             {
                 string[] ban = ban_.Split(';');
-                if (ban.Contains(player.HWID) || ban.Contains(player.GUID.ToString()) || ban.Contains(player.Name))
+                if (ban.Contains(player.HWID) || ban.Contains(player.GUID.ToString()) || ban.Contains(player.GetXUID()) || ban.Contains(player.Name))
                 {
-                    if(ban[3] == "perm" || ban[3] == "temp")
+                    if(ban[4] == "perm")
                     {
                         return $"{ban[3]}";
+                    }
+                    if(ban[4] == "temp")
+                    {
+                        if(DateTime.Parse(ban[5]) <= DateTime.Now)
+                        {
+                            UnbanPlayer(player.Name);
+                            return null;
+                        }
+                        else
+                        {
+                            return "temp";
+                        }
                     }
                 }
             }
@@ -186,14 +203,14 @@ namespace Nightingale
 
         public void TempBanPlayer(Entity player, int minutes, string reason, Entity inflictor = null)
         {
-            // hwid;guid;name;type;endTime
+            // hwid;guid;xuid;name;type;endTime
             if (reason == "")
             {
                 reason = "no reason";
             }
 
             KickPlayer(player, reason, inflictor);
-            File.AppendAllText(Config.GetFile("banned_players"), $"{player.HWID};{player.GUID};{(string)player.GetField("OriginalName")};temp;{DateTime.Now.AddMinutes(minutes)}\n");
+            File.AppendAllText(Config.GetFile("banned_players"), $"{player.HWID};{player.GUID};{player.GetXUID()};{(string)player.GetField("OriginalName")};temp;{DateTime.Now.AddMinutes(minutes)}\n");
             WriteLog.Info($"{player.GetField("OriginalName")} has been tempbanned for {reason}.");
 
             if (reason == "")
@@ -221,14 +238,14 @@ namespace Nightingale
         }
         public void PermBanPlayer(Entity player, string reason, Entity inflictor = null)
         {
-            // hwid;guid;name;type;endTime
+            // hwid;guid;xuid;name;type;endTime
             if (reason == "")
             {
                 reason = "no reason";
             }
 
             KickPlayer(player, reason, inflictor);
-            File.AppendAllText(Config.GetFile("banned_players"), $"{player.HWID};{player.GUID};{(string)player.GetField("OriginalName")};perm;\n");
+            File.AppendAllText(Config.GetFile("banned_players"), $"{player.HWID};{player.GUID};{player.GetXUID()};{(string)player.GetField("OriginalName")};perm;\n");
             WriteLog.Info($"{player.GetField("OriginalName")} has been banned for {reason}.");
 
             if (inflictor == null)
@@ -304,14 +321,14 @@ namespace Nightingale
                 // TODO Change to temp-ban
                 if (inflictor == null)
                 {
-                    TempBanPlayer(player, 10, "^1Too many warnings");
+                    TempBanPlayer(player, 1, "^1Too many warnings");
                     player.SetField("Warns", 0);
                     oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
                     File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={newWarns}", "Warns=0"));
                 }
                 else
                 {
-                    TempBanPlayer(player, 10, "^1Too many warnings");
+                    TempBanPlayer(player, 1, "^1Too many warnings");
                     player.SetField("Warns", 0);
                     oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
                     File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={newWarns}", "Warns=0"));

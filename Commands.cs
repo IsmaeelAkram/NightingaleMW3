@@ -146,18 +146,21 @@ namespace Nightingale
                 target.IPrintLnBold(String.Join(" ", args).Replace(args[0], "").Trim());
             }));
 
+            CommandList.Add(new Command("afk", (sender, args) =>
+            {
+                SetPlayerAFK(sender);
+            }));
+
             CommandList.Add(new Command("setgroup", (sender, args) => {
                 Entity target = FindSinglePlayer(args[0]);
                 string newGroup = args[1].ToLower();
 
                 string[] groupsFile = File.ReadAllLines(Config.GetFile("groups"));
-                List<string> groupHierarchy = new List<string>();
 
                 foreach(string group_ in groupsFile)
                 {
                     //RankName;RankTag;Commands
                     string[] group = group_.Split(';');
-                    groupHierarchy.Add(group[0]);
                     if (group[0] == newGroup)
                     {
                         SetPlayerGroup(target, (string)target.GetField("GroupName"), newGroup, group[1], group[2]);

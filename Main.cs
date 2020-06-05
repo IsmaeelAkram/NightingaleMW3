@@ -174,7 +174,7 @@ namespace Nightingale
             {
                 WarnPlayer(inflictor, "dropshot");
             } else if (inflictor.PlayerAds() <= 0.60 && inflictor.PlayerAds() > 0) {
-                WarnPlayer(inflictor, $"halfscope ({inflictor.PlayerAds()} percent)");
+                WarnPlayer(inflictor, $"halfscope ({(int)Math.Round(inflictor.PlayerAds() * 100, 0)} percent)");
             }
 
             base.OnPlayerDamage(player, inflictor, attacker, damage, dFlags, mod, weapon, point, dir, hitLoc);
