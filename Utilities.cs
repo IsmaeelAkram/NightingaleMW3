@@ -86,7 +86,7 @@ namespace Nightingale
             player.Name = alias;
 
             String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
-            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"\"{old_alias}\"", $"\"{alias}\""));
+            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Alias={old_alias}", $"Alias={alias}"));
         }
 
         public void SetPlayerGroup(Entity player, string old_group, string group, string groupPrefix, string groupAvailableCommands)
@@ -96,7 +96,7 @@ namespace Nightingale
             player.SetField("GroupAvailableCommands", groupAvailableCommands);
 
             String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
-            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace(old_group, group));
+            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Group={old_group}", $"Group={group}"));
         }
 
         public void KickPlayer(Entity player, string reason, Entity inflictor = null)
@@ -124,16 +124,16 @@ namespace Nightingale
             }
         }
 
-        public void UnbanPlayer(Entity player, Entity inflictor = null)
+        public void UnbanPlayer(string player, Entity inflictor = null)
         {
-            Utilities.ExecuteCommand($"unban \"{player.Name}\"");
-            WriteLog.Info($"{player.GetField("OriginalName")} has been unbanned.");
+            Utilities.ExecuteCommand($"unban \"{player}\"");
+            WriteLog.Info($"{player} has been unbanned.");
 
             if(inflictor == null)
             {
                 SayToAll(FormatMessage(Config.GetString("unban_message"), new Dictionary<string, string>()
                 {
-                    { "target", player.Name },
+                    { "target", player },
                     { "instigator", "Nightingale" }
                 }));
             }
@@ -141,7 +141,7 @@ namespace Nightingale
             {
                 SayToAll(FormatMessage(Config.GetString("unban_message"), new Dictionary<string, string>()
                 {
-                    { "target", player.Name },
+                    { "target", player },
                     { "instigator", inflictor.Name }
                 }));
             }
@@ -179,7 +179,7 @@ namespace Nightingale
             int newWarns = (int)player.GetField("Warns");
 
             String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
-            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace(oldWarns.ToString(), newWarns.ToString()));
+            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={oldWarns}", $"Warns={newWarns}"));
 
             if (inflictor == null)
             {
@@ -210,24 +210,24 @@ namespace Nightingale
             int newWarns = (int)player.GetField("Warns");
 
             String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
-            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace(oldWarns.ToString(), newWarns.ToString()));
+            File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={oldWarns}", $"Warns={newWarns}"));
 
             if ((int)player.GetField("Warns") == 3)
             {
                 // TODO Change to temp-ban
                 if (inflictor == null)
                 {
-                    KickPlayer(player, reason);
+                    KickPlayer(player, "^1Too many warnings.");
                     player.SetField("Warns", 0);
                     oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
-                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace((string)player.GetField("Warns"), "0"));
+                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={(string)player.GetField("Warns")}", "Warns=0"));
                 }
                 else
                 {
-                    KickPlayer(player, reason, inflictor);
+                    KickPlayer(player, "^1Too many warnings.", inflictor);
                     player.SetField("Warns", 0);
                     oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
-                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace((string)player.GetField("Warns"), "0"));
+                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={(string)player.GetField("Warns")}", "Warns=0"));
                 }
             }
 

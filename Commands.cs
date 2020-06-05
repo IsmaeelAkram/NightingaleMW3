@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Nightingale
 {
@@ -33,12 +34,6 @@ namespace Nightingale
         {
             WriteLog.Info("Initializing commands...");
 
-
-
-            CommandList.Add(new Command("ping", (sender, args) =>
-            {
-                SayToPlayer(sender, "^1Pong!");
-            }));
 
             CommandList.Add(new Command("help", (sender, args) =>
             {
@@ -111,6 +106,10 @@ namespace Nightingale
             CommandList.Add(new Command("yell", (sender, args) =>
             {
                 Entity target = FindSinglePlayer(args[0]);
+                if(target == null)
+                {
+                    SayToPlayer(sender, Config.GetString("player_not_found"));
+                }
                 target.IPrintLnBold(String.Join(" ", args).Replace(args[0], "").Trim());
             }));
 
@@ -119,23 +118,36 @@ namespace Nightingale
                 string newGroup = args[1];
 
                 string[] groupsFile = File.ReadAllLines(Config.GetFile("groups"));
+                List<string> groupHierarchy = new List<string>();
 
                 foreach(string group_ in groupsFile)
                 {
                     //RankName;RankTag;Commands
                     string[] group = group_.Split(';');
+                    groupHierarchy.Add(group[0]);
                     if (group[0] == newGroup)
                     {
-                        SetPlayerGroup(target, (string)target.GetField("GroupName"), newGroup, group[1], group[2]);
-                        SayToPlayer(sender, FormatMessage(Config.GetString("group_change_success"), new Dictionary<string, string>()
+                        if (groupHierarchy.IndexOf(target.GetField("GroupName").ToString()) < groupHierarchy.IndexOf(group[0])){
+                            SayToPlayer(sender, FormatMessage(Config.GetString("group_too_high"), new Dictionary<string, string>()
+                            {
+                                {"target", (string)target.GetField("OriginalName") },
+                                {"var", newGroup }
+                            }));
+                            return;
+                        }
+                        else
                         {
-                            {"target", (string)target.GetField("OriginalName") },
-                            {"var", newGroup }
-                        }));
-                        return;
+                            SetPlayerGroup(target, (string)target.GetField("GroupName"), newGroup, group[1], group[2]);
+                            SayToPlayer(sender, FormatMessage(Config.GetString("group_change_success"), new Dictionary<string, string>()
+                            {
+                                {"target", (string)target.GetField("OriginalName") },
+                                {"var", newGroup }
+                            }));
+                            return;
+                        }
                     }
                 }
-                SayToPlayer(target, FormatMessage(Config.GetString("group_not_found"), new Dictionary<string, string>()
+                SayToPlayer(sender, FormatMessage(Config.GetString("group_not_found"), new Dictionary<string, string>()
                 {
                     {"var", newGroup }
                 }));
@@ -199,7 +211,7 @@ namespace Nightingale
 
             CommandList.Add(new Command("unban", (sender, args) =>
             {
-                Entity target = FindSinglePlayer(args[0]);
+                string target = args[0];
 
                 UnbanPlayer(target, sender);
             }));

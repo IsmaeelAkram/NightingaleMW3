@@ -26,6 +26,7 @@ namespace Nightingale
             {"alias_invalid", "^7<var> ^5is invalid. ^7(Too long or has invalid characters)" },
             {"group_change_success", "^5Changed ^7<target>'s ^5group to ^7<var>^5." },
             {"group_not_found", "^1Group <var> not found." },
+            {"group_too_high", "^1Group <var> is higher than yours." },
 
             {"announcement_prefix", "^7[^5Nightingale^7] "},
             { "pm_prefix", "^7[^5PM^7] "}
@@ -45,7 +46,8 @@ namespace Nightingale
             { "settings", GetPath("main") + "settings.txt" },
             { "groups", GetPath("main") + "groups.txt" },
             { "bad_names", GetPath("anti_hacker") + "badnames.txt" },
-            { "bad_ips", GetPath("anti_hacker") + "badIPs.txt" }
+            { "bad_ips", GetPath("anti_hacker") + "badIPs.txt" },
+            { "banned_players", GetPath("utils") + "bannedplayers.txt" }
         };
 
         public static bool GetBool(string name)

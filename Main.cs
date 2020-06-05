@@ -47,7 +47,7 @@ namespace Nightingale
                 foreach (string option_ in options)
                 {
                     string optionTrimmed = option_.Trim();
-                    string[] option = optionTrimmed.Split(new string[] { " = " }, StringSplitOptions.None);
+                    string[] option = optionTrimmed.Split('=');
 
                     if (option[0] == "OriginalName")
                     {
@@ -55,7 +55,7 @@ namespace Nightingale
                     }
                     if (option[0] == "Alias")
                     {
-                        player.SetField(option[0], option[1].Replace("\"", ""));
+                        player.SetField(option[0], option[1]);
                     }
                     if (option[0] == "GroupName")
                     {
@@ -77,7 +77,7 @@ namespace Nightingale
                 foreach (string option_ in options)
                 {
                     string optionTrimmed = option_.Trim();
-                    string[] option = optionTrimmed.Split(new string[] { " = " }, StringSplitOptions.None);
+                    string[] option = optionTrimmed.Split('=');
 
                     if (option[0] == "OriginalName")
                     {
@@ -85,8 +85,7 @@ namespace Nightingale
                     }
                     if (option[0] == "Alias")
                     {
-                        string alias = option[1].Replace("\"", "");
-                        player.SetField(option[0], alias);
+                        player.SetField(option[0], option[1]);
                     }
                     if (option[0] == "GroupName")
                     {
@@ -113,7 +112,7 @@ namespace Nightingale
 
             if (!((string)player.GetField("Alias") == "None"))
             {
-                AfterDelay(2000, () => player.Name = player.GetField("Alias").ToString().Replace("\"", ""));
+                AfterDelay(3000, () => player.Name = (string)player.GetField("Alias"));
             }
 
             // Set dvars
@@ -160,7 +159,7 @@ namespace Nightingale
             if (inflictor.GetStance() == "prone")
             {
                 WarnPlayer(inflictor, "dropshot");
-            } else if (inflictor.PlayerAds() <= 60 && inflictor.PlayerAds() > 0) {
+            } else if (inflictor.PlayerAds() <= 0.60 && inflictor.PlayerAds() > 0) {
                 WarnPlayer(inflictor, $"halfscope ({inflictor.PlayerAds()} percent)");
             }
 
