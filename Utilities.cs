@@ -104,6 +104,11 @@ namespace Nightingale
             Utilities.ExecuteCommand($"kick \"{player.GetField("OriginalName")}\" {reason}");
             WriteLog.Info($"{player.GetField("OriginalName")} has been kicked for {reason}.");
 
+            if (reason == "")
+            {
+                reason = "no reason";
+            }
+
             if (inflictor == null)
             {
                 SayToAll(FormatMessage(Config.GetString("kick_message"), new Dictionary<string, string>()
@@ -152,6 +157,11 @@ namespace Nightingale
             Utilities.ExecuteCommand($"banclient \"{player.GetEntityNumber()}\" {reason}");
             WriteLog.Info($"{player.GetField("OriginalName")} has been banned for {reason}.");
 
+            if (reason == "")
+            {
+                reason = "no reason";
+            }
+
             if (inflictor == null)
             {
                 SayToAll(FormatMessage(Config.GetString("ban_message"), new Dictionary<string, string>()
@@ -175,30 +185,38 @@ namespace Nightingale
         public void UnwarnPlayer(Entity player, Entity inflictor = null)
         {
             int oldWarns = (int)player.GetField("Warns");
-            player.SetField("Warns", oldWarns - 1);
             int newWarns = (int)player.GetField("Warns");
+            if (oldWarns == 0)
+            {
+                newWarns = 0;
+            }
+            else
+            {
+                newWarns -= 1;
+            }
+            player.SetField("Warns", newWarns);
 
             String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
             File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={oldWarns}", $"Warns={newWarns}"));
 
             if (inflictor == null)
             {
-                SayToAll(FormatMessage(Config.GetString("unwarn_message"), new Dictionary<string, string>()
+                SayToAll(FormatMessage(Config.GetString("unwarn_success"), new Dictionary<string, string>()
                 {
                     { "target", player.Name },
                     { "instigator", "Nightingale" },
                     { "warns", newWarns.ToString() },
-                    { "maxWarns", "3" }
+                    { "maxwarns", "3" }
                 }));
             }
             else
             {
-                SayToAll(FormatMessage(Config.GetString("unwarn_message"), new Dictionary<string, string>()
+                SayToAll(FormatMessage(Config.GetString("unwarn_success"), new Dictionary<string, string>()
                 {
                     { "target", player.Name },
                     { "instigator", inflictor.Name },
                     { "warns", newWarns.ToString() },
-                    { "maxWarns", "3" }
+                    { "maxwarns", "3" }
                 }));
             }
         }
@@ -206,51 +224,51 @@ namespace Nightingale
         public void WarnPlayer(Entity player, string reason, Entity inflictor = null)
         {
             int oldWarns = (int)player.GetField("Warns");
-            player.SetField("Warns", oldWarns + 1);
-            int newWarns = (int)player.GetField("Warns");
+            int newWarns = oldWarns + 1;
+            player.SetField("Warns", newWarns);
 
             String oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
             File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={oldWarns}", $"Warns={newWarns}"));
 
-            if ((int)player.GetField("Warns") == 3)
+            if (newWarns >= 3)
             {
                 // TODO Change to temp-ban
                 if (inflictor == null)
                 {
-                    KickPlayer(player, "^1Too many warnings.");
+                    KickPlayer(player, "^1Too many warnings");
                     player.SetField("Warns", 0);
                     oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
-                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={(string)player.GetField("Warns")}", "Warns=0"));
+                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={newWarns}", "Warns=0"));
                 }
                 else
                 {
-                    KickPlayer(player, "^1Too many warnings.", inflictor);
+                    KickPlayer(player, "^1Too many warnings", inflictor);
                     player.SetField("Warns", 0);
                     oldConfig = File.ReadAllText(Config.GetPath("players") + $"{player.HWID}.dat");
-                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={(string)player.GetField("Warns")}", "Warns=0"));
+                    File.WriteAllText(Config.GetPath("players") + $"{player.HWID}.dat", oldConfig.Replace($"Warns={newWarns}", "Warns=0"));
                 }
             }
 
             if(inflictor == null)
             {
-                SayToAll(FormatMessage(Config.GetString("warn_message"), new Dictionary<string, string>()
+                SayToAll(FormatMessage(Config.GetString("warn_success"), new Dictionary<string, string>()
                 {
                     { "target", player.Name },
                     { "instigator", "Nightingale" },
                     { "reason", reason },
                     { "warns", newWarns.ToString() },
-                    { "maxWarns", "3" }
+                    { "maxwarns", "3" }
                 }));
             }
             else
             {
-                SayToAll(FormatMessage(Config.GetString("warn_message"), new Dictionary<string, string>()
+                SayToAll(FormatMessage(Config.GetString("warn_success"), new Dictionary<string, string>()
                 {
                     { "target", player.Name },
                     { "instigator", inflictor.Name },
                     { "reason", reason },
                     { "warns", newWarns.ToString() },
-                    { "maxWarns", "3" }
+                    { "maxwarns", "3" }
                 }));
             }
         }

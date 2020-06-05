@@ -22,14 +22,14 @@ namespace Nightingale
             {"bad_ip", "^1Proxies and VPNs are not allowed on this server!"},
             {"bad_name", "^1Bye hacker!"},
             {"bad_id", "^1Bye hacker!"},
-            {"alias_success", "^5Changed alias to ^7<var>." },
+            {"alias_success", "^5Changed ^7<target>'s^5 alias to ^7<var>." },
+            {"alias_reset", "^5Reset ^7<target>'s^5 alias." },
             {"alias_invalid", "^7<var> ^5is invalid. ^7(Too long or has invalid characters)" },
             {"group_change_success", "^5Changed ^7<target>'s ^5group to ^7<var>^5." },
             {"group_not_found", "^1Group <var> not found." },
-            {"group_too_high", "^1Group <var> is higher than yours." },
 
             {"announcement_prefix", "^7[^5Nightingale^7] "},
-            { "pm_prefix", "^7[^5PM^7] "}
+            { "pm_prefix", "^0(^2PM^0)^7 "}
         };
 
         public static Dictionary<string, string> Paths = new Dictionary<string, string>()

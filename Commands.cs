@@ -73,9 +73,9 @@ namespace Nightingale
                 if (newAlias == "")
                 {
                     SetPlayerAlias(sender, (string)sender.GetField("Alias"), (string)sender.GetField("OriginalName"));
-                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>()
+                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_reset"), new Dictionary<string, string>()
                     {
-                        {"var", (string)sender.GetField("OriginalName") }
+                        {"target", (string)sender.GetField("OriginalName") }
                     }));
                     return;
                 }
@@ -93,6 +93,39 @@ namespace Nightingale
                     SetPlayerAlias(sender, (string)sender.GetField("Alias"), newAlias);
                     SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>()
                     {
+                        {"target", (string)sender.GetField("OriginalName") },
+                        {"var", newAlias }
+                    }));
+                }
+            }));
+
+            CommandList.Add(new Command("alias", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+                string newAlias = String.Join(" ", args).Replace(args[0], "").Trim();
+                if (newAlias == "")
+                {
+                    SetPlayerAlias(target, (string)target.GetField("Alias"), (string)target.GetField("OriginalName"));
+                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_reset"), new Dictionary<string, string>()
+                    {
+                        {"target", (string)target.GetField("OriginalName") }
+                    }));
+                    return;
+                }
+                else if (newAlias.Length > 15)
+                {
+                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_invalid"), new Dictionary<string, string>()
+                    {
+                        {"var", newAlias }
+                    }));
+                    return;
+                }
+                else
+                {
+                    SetPlayerAlias(target, (string)target.GetField("Alias"), newAlias);
+                    SayToPlayer(sender, FormatMessage(Config.GetString("alias_success"), new Dictionary<string, string>()
+                    {
+                        {"target", (string)sender.GetField("OriginalName") },
                         {"var", newAlias }
                     }));
                 }
@@ -115,7 +148,7 @@ namespace Nightingale
 
             CommandList.Add(new Command("setgroup", (sender, args) => {
                 Entity target = FindSinglePlayer(args[0]);
-                string newGroup = args[1];
+                string newGroup = args[1].ToLower();
 
                 string[] groupsFile = File.ReadAllLines(Config.GetFile("groups"));
                 List<string> groupHierarchy = new List<string>();
@@ -127,24 +160,13 @@ namespace Nightingale
                     groupHierarchy.Add(group[0]);
                     if (group[0] == newGroup)
                     {
-                        if (groupHierarchy.IndexOf(target.GetField("GroupName").ToString()) < groupHierarchy.IndexOf(group[0])){
-                            SayToPlayer(sender, FormatMessage(Config.GetString("group_too_high"), new Dictionary<string, string>()
-                            {
-                                {"target", (string)target.GetField("OriginalName") },
-                                {"var", newGroup }
-                            }));
-                            return;
-                        }
-                        else
+                        SetPlayerGroup(target, (string)target.GetField("GroupName"), newGroup, group[1], group[2]);
+                        SayToPlayer(sender, FormatMessage(Config.GetString("group_change_success"), new Dictionary<string, string>()
                         {
-                            SetPlayerGroup(target, (string)target.GetField("GroupName"), newGroup, group[1], group[2]);
-                            SayToPlayer(sender, FormatMessage(Config.GetString("group_change_success"), new Dictionary<string, string>()
-                            {
-                                {"target", (string)target.GetField("OriginalName") },
-                                {"var", newGroup }
-                            }));
-                            return;
-                        }
+                            {"target", (string)target.GetField("OriginalName") },
+                            {"var", newGroup }
+                        }));
+                        return;
                     }
                 }
                 SayToPlayer(sender, FormatMessage(Config.GetString("group_not_found"), new Dictionary<string, string>()
@@ -190,10 +212,6 @@ namespace Nightingale
                 Entity target = FindSinglePlayer(args[0]);
 
                 string reason = String.Join(" ", args).Replace(args[0], "").Trim();
-                if (reason == "")
-                {
-                    reason = "no reason";
-                }
                 KickPlayer(target, reason, sender);
             }));
 
@@ -201,10 +219,6 @@ namespace Nightingale
             {
                 Entity target = FindSinglePlayer(args[0]);
                 string reason = String.Join(" ", args).Replace(args[0], "").Trim();
-                if (reason == "")
-                {
-                    reason = "no reason";
-                }
 
                 BanPlayer(target, reason, sender);
             }));
