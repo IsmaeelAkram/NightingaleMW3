@@ -80,9 +80,10 @@ namespace Nightingale
             return players[0];
         }
 
-        public void SetPlayerAFK(Entity player)
+        public void SetPlayerTeam(Entity player, string team)
         {
-
+            player.SetField("sessionteam", team);
+            player.Notify("menuresponse", "team_marinesopfor", team);
         }
 
         public void SetPlayerAlias(Entity player, string old_alias, string alias)
@@ -170,7 +171,6 @@ namespace Nightingale
             {
                 if (ban.Contains(player))
                 {
-                    bannedPlayers.Remove(ban);
                     File.WriteAllText(Config.GetFile("banned_players"), String.Join("\n", bannedPlayers));
                     WriteLog.Info($"{player} has been unbanned.");
 
@@ -209,7 +209,7 @@ namespace Nightingale
                 reason = "no reason";
             }
 
-            KickPlayer(player, reason, inflictor);
+            Utilities.ExecuteCommand($"kickclient {player.EntRef} \"{reason}\"");
             File.AppendAllText(Config.GetFile("banned_players"), $"{player.HWID};{player.GUID};{player.GetXUID()};{(string)player.GetField("OriginalName")};temp;{DateTime.Now.AddMinutes(minutes)}\n");
             WriteLog.Info($"{player.GetField("OriginalName")} has been tempbanned for {reason}.");
 
@@ -244,7 +244,7 @@ namespace Nightingale
                 reason = "no reason";
             }
 
-            KickPlayer(player, reason, inflictor);
+            Utilities.ExecuteCommand($"kickclient {player.EntRef} \"{reason}\"");
             File.AppendAllText(Config.GetFile("banned_players"), $"{player.HWID};{player.GUID};{player.GetXUID()};{(string)player.GetField("OriginalName")};perm;\n");
             WriteLog.Info($"{player.GetField("OriginalName")} has been banned for {reason}.");
 

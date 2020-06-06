@@ -26,12 +26,13 @@ namespace Nightingale
                 if (bannedStatus == "temp")
                 {
                     Utilities.ExecuteCommand($"kickclient {player.EntRef} \"{Config.GetString("tempbanned_message")}\"");
+                    WriteLog.Warning($"{player.Name} is banned. Kicked.");
                 }
                 if (bannedStatus == "perm")
                 {
                     Utilities.ExecuteCommand($"kickclient {player.EntRef} \"{Config.GetString("banned_message")}\"");
+                    WriteLog.Warning($"{player.Name} is banned. Kicked.");
                 }
-                WriteLog.Warning($"{player.Name} is banned. Kicked.");
                 return;
             });
             if (AntiHacker.HasBadName(player)) AfterDelay(2000, () => {
@@ -152,7 +153,7 @@ namespace Nightingale
                     if (!message.StartsWith("!"))
                     {
                         WriteLog.Info($"{(string)player.GetField("GroupPrefix")}{player.Name}: {message}");
-                        Utilities.RawSayAll($"{(string)player.GetField("GroupPrefix")}{player.Name}:^7 {message}");
+                        Utilities.RawSayAll($"{(string)player.GetField("GroupPrefix")}{player.GetField("Alias")}:^7 {message}");
                         return EventEat.EatGame;
                     }
                     else
@@ -170,11 +171,16 @@ namespace Nightingale
 
         public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc)
         {
-            if (inflictor.GetStance() == "prone")
+            if(inflictor != null)
             {
-                WarnPlayer(inflictor, "dropshot");
-            } else if (inflictor.PlayerAds() <= 0.60 && inflictor.PlayerAds() > 0) {
-                WarnPlayer(inflictor, $"halfscope ({(int)Math.Round(inflictor.PlayerAds() * 100, 0)} percent)");
+                if (inflictor.GetStance() == "prone")
+                {
+                    WarnPlayer(inflictor, "dropshot");
+                }
+                else if (inflictor.PlayerAds() <= 0.60 && inflictor.PlayerAds() > 0)
+                {
+                    WarnPlayer(inflictor, $"halfscope ({(int)Math.Round(inflictor.PlayerAds() * 100, 0)} percent)");
+                }
             }
 
             base.OnPlayerDamage(player, inflictor, attacker, damage, dFlags, mod, weapon, point, dir, hitLoc);

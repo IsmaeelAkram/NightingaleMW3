@@ -148,7 +148,13 @@ namespace Nightingale
 
             CommandList.Add(new Command("afk", (sender, args) =>
             {
-                SetPlayerAFK(sender);
+                SetPlayerTeam(sender, "spectator");
+            }));
+
+            CommandList.Add(new Command("afk", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+                SetPlayerTeam(target, "spectator");
             }));
 
             CommandList.Add(new Command("setgroup", (sender, args) => {
