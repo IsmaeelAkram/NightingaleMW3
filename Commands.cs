@@ -38,7 +38,7 @@ namespace Nightingale
             CommandList.Add(new Command("help", (sender, args) =>
             {
                 string helpMessage = "^3";
-                if((string)sender.GetField("GroupAvailableCommands") == "*ALL*")
+                if ((string)sender.GetField("GroupAvailableCommands") == "*ALL*")
                 {
                     foreach (Command cmd in CommandList)
                     {
@@ -55,7 +55,7 @@ namespace Nightingale
                 SayToPlayer(sender, "^3Commands for ^1Nightingale^3:");
                 SayToPlayer(sender, helpMessage);
             }));
-           
+
 
             CommandList.Add(new Command("res", (sender, args) =>
             {
@@ -79,7 +79,7 @@ namespace Nightingale
                     }));
                     return;
                 }
-                else if(newAlias.Length > 15)
+                else if (newAlias.Length > 15)
                 {
                     SayToPlayer(sender, FormatMessage(Config.GetString("alias_invalid"), new Dictionary<string, string>()
                     {
@@ -139,7 +139,7 @@ namespace Nightingale
             CommandList.Add(new Command("yell", (sender, args) =>
             {
                 Entity target = FindSinglePlayer(args[0]);
-                if(target == null)
+                if (target == null)
                 {
                     SayToPlayer(sender, Config.GetString("player_not_found"));
                 }
@@ -163,7 +163,7 @@ namespace Nightingale
 
                 string[] groupsFile = File.ReadAllLines(Config.GetFile("groups"));
 
-                foreach(string group_ in groupsFile)
+                foreach (string group_ in groupsFile)
                 {
                     //RankName;RankTag;Commands
                     string[] group = group_.Split(';');
@@ -187,18 +187,32 @@ namespace Nightingale
             CommandList.Add(new Command("admins", (sender, args) =>
             {
                 List<Entity> admins = new List<Entity>();
-                foreach(Entity player in Players)
+                foreach (Entity player in Players)
                 {
-                    if((string)player.GetField("GroupName") != "default")
+                    if ((string)player.GetField("GroupName") != "default")
                     {
                         admins.Add(player);
                     }
                 }
 
-                foreach(Entity admin in admins)
+                foreach (Entity admin in admins)
                 {
                     SayToPlayer(sender, $"{(string)admin.GetField("GroupPrefix")}{(string)admin.GetField("OriginalName")}");
                 }
+            }));
+
+            bool whEnabled = false;
+            CommandList.Add(new Command("wh", (sender, args) =>
+            {
+                if(whEnabled == true)
+                {
+                    sender.SetClientDvar("ac130_hitbox", 0x0);
+                }else
+                {
+
+                    sender.SetClientDvar("ac130_hitbox", 0x90);
+                }
+
             }));
 
             CommandList.Add(new Command("warn", (sender, args) =>
