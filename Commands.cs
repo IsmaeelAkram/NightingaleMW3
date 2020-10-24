@@ -201,16 +201,44 @@ namespace Nightingale
                 }
             }));
 
+            bool hideEnabled = false;
+            CommandList.Add(new Command("wh", (sender, args) =>
+            {
+                Entity target = FindSinglePlayer(args[0]);
+                if (target == null)
+                {
+                    target = sender;
+                }
+                if (hideEnabled == false)
+                {
+                    target.Hide();
+                    hideEnabled = true;
+                }
+                else
+                {
+                    //UNHIDE???
+                    hideEnabled = false;
+                }
+
+            }));
+
             bool whEnabled = false;
             CommandList.Add(new Command("wh", (sender, args) =>
             {
-                if(whEnabled == true)
+                Entity target = FindSinglePlayer(args[0]);
+                if(target == null)
+				{
+                    target = sender;
+				}
+                if (whEnabled == false)
                 {
-                    sender.SetClientDvar("ac130_hitbox", 0x0);
-                }else
+                    target.ThermalVisionFOFOverlayOn();
+                    whEnabled = true;
+                }
+                else
                 {
-
-                    sender.SetClientDvar("ac130_hitbox", 0x90);
+                    target.ThermalVisionFOFOverlayOff();
+                    whEnabled = false;
                 }
 
             }));
@@ -292,7 +320,7 @@ namespace Nightingale
             WriteLog.Info(sender.Name + " attempted " + commandname);
 
             Command commandToBeRun;
-            commandToBeRun = FindCommand(commandname);
+            commandToBeRun = FindCommand(commandname.ToLower());
 
             if (commandToBeRun == null)
             {
