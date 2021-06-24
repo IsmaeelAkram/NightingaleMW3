@@ -6,8 +6,8 @@ namespace Nightingale
 {
     class AntiHacker
     {
-        //TODO Check for invalid HWID,GUID,XUID
-        //TODO Check for VPN
+        //TODO: Check for invalid HWID,GUID,XUID
+        //TODO: Check for VPN
 
         public static bool HasBadName(Entity player)
         {
@@ -24,7 +24,7 @@ namespace Nightingale
 
         public static bool HasBadIP(Entity player)
         {
-            string[] IPs = File.ReadAllLines(Config.GetFile("bad_names"));
+            string[] IPs = File.ReadAllLines(Config.GetFile("bad_ips"));
             foreach (string IP in IPs)
             {
                 if (player.IP.Address.ToString() == IP)
